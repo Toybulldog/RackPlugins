@@ -23,7 +23,8 @@ Debug: all
 .PHONY: dist
 dist: all
 	mkdir -p dist/$(SLUG)
+	mkdir -p dist/$(SLUG)/res
 	cp LICENSE* dist/$(SLUG)/
 	cp $(TARGET) dist/$(SLUG)/
-	cp -R res dist/$(SLUG)/
+	cp -R res/*.svg dist/$(SLUG)/res/
 	cd dist && zip -5 -r $(SLUG)-$(VERSION)-$(ARCH).zip $(SLUG)

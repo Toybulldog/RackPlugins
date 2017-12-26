@@ -11,8 +11,8 @@ void init(rack::Plugin *p)
 #ifdef VERSION
 	p->version = TOSTRING(VERSION);
 #endif
-	p->website = "https://github.com/VCVRack/Tutorial";
-	p->manual = "https://github.com/VCVRack/Tutorial/blob/master/README.md";
+	p->website = "https://github.com/The-XOR/VCV-Sequencers";
+	p->manual = "https://github.com/The-XOR/VCV-Sequencers/blob/master/README.md";
 
 	// For each module, specify the ModuleWidget subclass, manufacturer slug (for saving in patches), manufacturer human-readable name, module slug, and module name
 	p->addModel(createModel<KleeWidget>("TheXOR", "Klee", "Klee Sequencer", SEQUENCER_TAG));

@@ -75,3 +75,14 @@ struct NKK3 : NKK
         setValue((rand() / f) * 3.0);
     }
 };
+
+struct CKSS2 : CKSS
+{
+    void randomize() override
+    {
+        if(rand() >= RAND_MAX/2)
+            setValue(1.0);
+        else
+            setValue(0.0);
+    }
+};

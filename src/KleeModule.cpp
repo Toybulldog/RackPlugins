@@ -16,6 +16,7 @@ struct Klee : Module
         BUS1_LOAD,
         BUS_MERGE,
         RANGE = BUS_MERGE + 3,
+        BUS2_MODE,
         NUM_PARAMS
     };
 
@@ -49,7 +50,14 @@ struct Klee : Module
         NUM_LIGHTS
     };
 
-    Klee() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
+    Klee() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {load();}
+    void fromJson(json_t *root) override {Module::fromJson(root); load();}
+    json_t *toJson() override
+    {
+		json_t *rootJ = json_object();
+
+		return rootJ;
+	}
     void step() override;
     void reset() override {load();}
     void randomize() override {load();}
@@ -134,7 +142,10 @@ void Klee::update_bus()
             bus_active[getValue3(k)] = true;
         }
     }
-    bus_active[1] &= !(bus_active[0] || bus_active[2]);  //BUS 2: NOR 0 , 3
+    if(isSwitchOn(BUS2_MODE))
+        bus_active[1] = bus_active[0] && bus_active[2];
+    else
+        bus_active[1] &= !(bus_active[0] || bus_active[2]);  //BUS 2: NOR 0 , 3
 
     //bus1 load
     if (isSwitchOn(BUS1_LOAD) && !bus1 && bus_active[0])
@@ -291,6 +302,7 @@ KleeWidget::KleeWidget()
         addOutput(createOutput<PJ301MPort>(Vec(648, RACK_GRID_HEIGHT-192-28+k*54), module, Klee::TRIG_OUT + k));
         addOutput(createOutput<PJ301MPort>(Vec(688, RACK_GRID_HEIGHT-192-28+k*54), module, Klee::GATE_OUT + k));
     }
+    addParam(createParam<CKSS2>(Vec(550, RACK_GRID_HEIGHT-192-28+54), module, Klee::BUS2_MODE, 0.0, 1.0, 0.0));
 
     //load
     addParam(createParam<BefacoPush>(Vec(10, RACK_GRID_HEIGHT-296), module, Klee::LOAD_PARAM, 0.0, 1.0, 0.0));
@@ -313,7 +325,7 @@ KleeWidget::KleeWidget()
     addParam(createParam<NKK2>(Vec(362, RACK_GRID_HEIGHT-182-28), module, Klee::B_INV, 0.0, 1.0, 0.0));     // norm /B inverted
 
     // CV Range
-    addParam(createParam<Davies1900hBlackKnob>(Vec(57, RACK_GRID_HEIGHT-138-28), module, Klee::RANGE, 0.0, 5.0, 1.0));
+    addParam(createParam<Davies1900hBlackKnob>(Vec(57, RACK_GRID_HEIGHT-138-28), module, Klee::RANGE, 0.001, 5.0, 1.0));
     addInput(createInput<PJ301MPort>(Vec(62, RACK_GRID_HEIGHT-76-28), module, Klee::RANGE_IN));
 
     // RND Threshold
@@ -326,9 +338,9 @@ KleeWidget::KleeWidget()
     int pos_y[8] = {232, 272, 299, 307, 307, 299, 272, 232};
     for(int k = 0; k < 8; k++)
     {
-        addParam(createParam<Davies1900hBlackKnob>(Vec(pos_x[k], RACK_GRID_HEIGHT-pos_y[k]), module, Klee::PITCH_KNOB + k, 0.0, 1.0, 0.0));
+        addParam(createParam<Davies1900hBlackKnob>(Vec(pos_x[k], RACK_GRID_HEIGHT-pos_y[k]), module, Klee::PITCH_KNOB + k, 0.0, 1.0, 0.125));
         addChild(createLight<MediumLight<RedLight>>(Vec(pos_x[k]+38, RACK_GRID_HEIGHT-pos_y[k]+20), module, Klee::LED_PITCH + k));
-        addParam(createParam<Davies1900hBlackKnob>(Vec(pos_x[7-k], RACK_GRID_HEIGHT-419+pos_y[7-k]), module, Klee::PITCH_KNOB + 8+ k, 0.0, 1.0, 0.0));
+        addParam(createParam<Davies1900hBlackKnob>(Vec(pos_x[7-k], RACK_GRID_HEIGHT-419+pos_y[7-k]), module, Klee::PITCH_KNOB + 8+ k, 0.0, 1.0, 0.125));
         addChild(createLight<MediumLight<GreenLight>>(Vec(pos_x[7-k]-12, RACK_GRID_HEIGHT-419+pos_y[7-k]+20), module, Klee::LED_PITCH + k+8));
     }
 }

@@ -124,7 +124,8 @@ void Klee::load()
 void Klee::update_bus()
 {
     bool bus1 = bus_active[0];
-    bus_active[0] = bus_active[2] = false;
+    for(int k = 0; k < 3;k++)
+        bus_active[k] = false;
 
     for (int k = 0; k < 16; k++)
     {
@@ -133,7 +134,7 @@ void Klee::update_bus()
             bus_active[getValue3(k)] = true;
         }
     }
-    bus_active[1] = !(bus_active[0] || bus_active[2]);  //BUS 2: NOR 0 , 3
+    bus_active[1] &= !(bus_active[0] || bus_active[2]);  //BUS 2: NOR 0 , 3
 
     //bus1 load
     if (isSwitchOn(BUS1_LOAD) && !bus1 && bus_active[0])

@@ -67,7 +67,7 @@ private:
     }
     void reset_counters()
     {
-        pulseCounter=0;
+        pulseCounter=stepDivCounter=0;
         for(curStep = 0; curStep < 8; curStep++)
         {
             if(params[STEP_ENABLE+curStep].value > 0.0)  // step on?
@@ -81,6 +81,11 @@ private:
     int get_next_step(int current);
     void playCurrent(float deltaTime);
     void showCurStep();
+    void note_off()
+    {
+        outputs[GATE].value = 0;
+    }
+
     int inc_step(int step);
     int dec_step(int step);
     bool any();
@@ -88,6 +93,7 @@ private:
     SchmittTrigger resetTrigger;
     int curStep;
     int pulseCounter;
+    int stepDivCounter;
 };
 
 void M581::on_loaded()
@@ -114,12 +120,17 @@ void M581::step()
 
 void M581::playCurrent(float deltaTime)
 {
-
     if(++pulseCounter > std::round(params[COUNTER_SWITCH+curStep].value))
     {
-        pulseCounter = 0;
+        pulseCounter = stepDivCounter = 0;
         curStep = get_next_step(curStep);
     }
+    int step_div = 1+std::round(params[STEP_DIV].value);
+    if((stepDivCounter++ % step_div) == 0)
+        note_out();
+    else
+        note_off();
+
     showCurStep();
 }
 

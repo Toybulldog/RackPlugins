@@ -8,6 +8,8 @@ extern Plugin *plugin;
 // module widgets
 ////////////////////
 
+
+
 struct KleeWidget : ModuleWidget
 {
 	KleeWidget();
@@ -75,6 +77,7 @@ struct NKK3 : NKK
         setValue((rand() / f) * 3.0);
     }
 };
+
 
 struct CKSS2 : CKSS
 {

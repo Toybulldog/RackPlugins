@@ -26,6 +26,6 @@ dist: all
 	mkdir -p dist/$(SLUG)/res
 	cp LICENSE* dist/$(SLUG)/
 	cp $(TARGET) dist/$(SLUG)/
-	cp -R res/*.svg dist/$(SLUG)/res/
+	cp -R res/*Module.svg dist/$(SLUG)/res/
 	cp -R res/Segment7Standard.ttf dist/$(SLUG)/res/
 	cd dist && zip -5 -r $(SLUG)-$(VERSION)-$(ARCH).zip $(SLUG)

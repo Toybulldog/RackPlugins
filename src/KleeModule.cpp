@@ -350,6 +350,7 @@ Menu *KleeWidget::createContextMenu()
 	MenuLabel *spacerLabel = new MenuLabel();
 	menu->addChild(spacerLabel);
 
+	menu->addChild(new KleeMenuItem("Range -> 1V", this, SET_RANGE_1V));
 	menu->addChild(new KleeMenuItem("Randomize Pitch", this, RANDOMIZE_PITCH));
 	menu->addChild(new KleeMenuItem("Randomize Bus", this, RANDOMIZE_BUS));
 	menu->addChild(new KleeMenuItem("Randomize Load", this, RANDOMIZE_LOAD));
@@ -363,5 +364,12 @@ void KleeWidget::onMenu(MENUACTIONS action)
         case RANDOMIZE_BUS: std_randomize(Klee::GROUPBUS); break;
         case RANDOMIZE_PITCH: std_randomize(Klee::PITCH_KNOB); break;
         case RANDOMIZE_LOAD: std_randomize(Klee::LOAD_BUS); break;
+        case SET_RANGE_1V:
+        {
+            int index = getParamIndex(Klee::RANGE);
+            if(index >= 0)
+                params[index]->setValue(1.0);
+        }
+        break;
     }
 }

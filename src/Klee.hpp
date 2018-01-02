@@ -4,12 +4,6 @@
 #include <algorithm>
 #include "dsp/digital.hpp"
 
-////////////////////
-// module widgets
-////////////////////
-
-
-
 struct KleeWidget : ModuleWidget
 {
 private:
@@ -17,7 +11,8 @@ private:
     {
         RANDOMIZE_BUS,
         RANDOMIZE_PITCH,
-        RANDOMIZE_LOAD
+        RANDOMIZE_LOAD,
+        SET_RANGE_1V
     };
 
     struct KleeMenuItem : MenuItem
@@ -117,11 +112,6 @@ struct NKK2 : NKK
 
 struct NKK3 : NKK
 {
-    NKK3() : NKK()
-    {
-        sw->wrap();
-    }
-
     void randomize() override
     {
         float f = RAND_MAX;

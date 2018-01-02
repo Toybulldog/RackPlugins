@@ -6,12 +6,18 @@ struct CV_LINE
 		startNoteValue = -1.0;
 	}
 
-	void Set(float newNote, float slideTime)
+	void Set(float newNote, float slideTime, bool slide_on)
 	{
 		if (startNoteValue < 0.0)
 			startNoteValue = newNote;
 
-		slideNoteIncrement = (newNote - startNoteValue) / (10000.0*slideTime);
+        if(slide_on)
+            slideNoteIncrement = (newNote - startNoteValue) / (10000.0*slideTime);
+        else
+        {
+            startNoteValue = newNote;
+            slideNoteIncrement = 0;
+        }
 	}
 
 	float Play(float deltaTime, float curNote)
@@ -27,7 +33,6 @@ struct CV_LINE
 private:
 	float startNoteValue;
 	float slideNoteIncrement;
-
 };
 
 struct GATE_LINE
@@ -36,26 +41,26 @@ private:
 	int stepDivCounter;
 	int stepDiv;
 	float curGateTime;
-	float startCVPulseTime;
+	float totalPulseTime;
 	void gate_len(float deltaTime, float *pOut)
 	{
-		float elapsed = deltaTime - startCVPulseTime;
-		if(elapsed > curGateTime)
+		totalPulseTime += deltaTime;
+		if(totalPulseTime > curGateTime)
 			*pOut = LVL_OFF;
 	}
 
 public:
 	void Reset()
 	{
-		curGateTime = startCVPulseTime = 0;
+		curGateTime = totalPulseTime = 0;
 		stepDivCounter=stepDiv=0;
 	}
 
-	void Set(float curTime, float gateTime, int step_div)
+	void Set(float gateTime, int step_div)
 	{
-		startCVPulseTime = curTime;
+		totalPulseTime = 0;
 		stepDiv = 1 + step_div;
-		curGateTime = 10000.0 * gateTime;
+		curGateTime = gateTime;
 		stepDivCounter=0;
 	}
 
@@ -104,17 +109,15 @@ struct TIMER
 
 	float Step()
 	{
-		curTime = clock();
-		float deltaTime = (10000.0 * float(curTime - prevTime)) / CLOCKS_PER_SEC;	// in 1/10 msec
+		clock_t curTime = clock();
+		clock_t deltaTime = curTime - prevTime;
 		prevTime = curTime;
-		return deltaTime;
+		return _toSec(deltaTime);
 	}
-
-	float CurTime() {return (10000.0 * float(curTime)) / CLOCKS_PER_SEC;}	// in 1/10 msec}
 
 private:
 	clock_t prevTime;
-	clock_t curTime;
+	float _toSec(clock_t t) {return float(t) / CLOCKS_PER_SEC;}
 };
 
 struct STEP_COUNTER

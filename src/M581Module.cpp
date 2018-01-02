@@ -66,7 +66,8 @@ private:
 
 	void _reset();
     void on_loaded();
-    void playCurrent(float curTime, float deltaTime);
+    void doTimeouts(bool play, float deltaTime);
+    void playCurrent(float deltaTime);
     void showCurStep(int cur_step);
     bool any();
     SchmittTrigger clockTrigger;
@@ -97,23 +98,28 @@ void M581::step()
         _reset();
     } else if(clockTrigger.process(inputs[CLOCK].value) && any())
     {
-        playCurrent(Timer.CurTime(), deltaTime);
-    }
+        playCurrent(deltaTime);
+    } else
+        doTimeouts(false, deltaTime);
 }
 
-void M581::playCurrent(float curTime, float deltaTime)
+void M581::playCurrent(float deltaTime)
 {
 	int cur_step = stepCounter.CurStep();
 	bool play = stepCounter.Play(std::round(params[COUNTER_SWITCH+cur_step].value), &params[STEP_ENABLE]);
     if(play)
     {
-		gateControl.Set(curTime, params[GATE_TIME].value, std::round(params[STEP_DIV].value));
-		cvControl.Set(params[STEP_NOTES + cur_step].value, params[SLIDE_TIME].value);	// 	glide note increment in 1/10 di msec. param = new note value
+		gateControl.Set(params[GATE_TIME].value, std::round(params[STEP_DIV].value));
+		cvControl.Set(params[STEP_NOTES + cur_step].value, params[SLIDE_TIME].value, params[STEP_ENABLE + cur_step].value > 1.0);	// 	glide note increment in 1/10 di msec. param = new note value
     }
-
-	outputs[CV].value = cvControl.Play(deltaTime, params[STEP_NOTES + cur_step].value);
-	gateControl.Play(play, std::round(params[GATE_SWITCH].value), deltaTime, &outputs[GATE].value);
+    doTimeouts(play, deltaTime);
     showCurStep(cur_step);
+}
+
+void M581::doTimeouts(bool play, float deltaTime)
+{
+	outputs[CV].value = cvControl.Play(deltaTime, params[STEP_NOTES + stepCounter.CurStep()].value);
+	gateControl.Play(play, std::round(params[GATE_SWITCH].value), deltaTime, &outputs[GATE].value);
 }
 
 void M581::showCurStep(int cur_step)

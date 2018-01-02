@@ -64,8 +64,6 @@ struct Klee : Module
 
 private:
     const float pulseTime = 0.002;      //2msec trigger
-    const float LVL_ON = 10.0;
-    const float LVL_OFF = 0.0;
     void showValues();
     void sr_rotate();
     bool chance();

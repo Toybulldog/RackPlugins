@@ -1,6 +1,5 @@
 #include "rack.hpp"
-using namespace rack;
-extern Plugin *plugin;
+#include "common.hpp"
 
 #include "dsp/digital.hpp"
 

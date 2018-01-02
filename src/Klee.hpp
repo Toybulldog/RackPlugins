@@ -1,6 +1,5 @@
 #include "rack.hpp"
-using namespace rack;
-extern Plugin *plugin;
+#include "common.hpp"
 
 #include "dsp/digital.hpp"
 
@@ -71,6 +70,11 @@ struct NKK2 : NKK
 
 struct NKK3 : NKK
 {
+    NKK3() : NKK()
+    {
+        sw->wrap();
+    }
+
     void randomize() override
     {
         float f = RAND_MAX;

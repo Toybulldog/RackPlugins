@@ -1,4 +1,5 @@
 #include "M581.hpp"
+#include "M581Types.hpp"
 #include <sstream>
 
 struct M581 : Module
@@ -55,116 +56,71 @@ struct M581 : Module
 
 		return rootJ;
 	}
-    int numSteps;
-    int runMode;
+    int *getAddress(int var)  {return stepCounter.getAddress(var);}
 
 private:
-    bool testaCroce() {return rand() >= RAND_MAX/2;}
-    int getRand(int rndMax)
-    {   float f = rand()/float(RAND_MAX);
-        f *= rndMax;
-        return int(f);
-    }
-    void reset_counters()
-    {
-        pulseCounter=stepDivCounter=0;
-        for(curStep = 0; curStep < 8; curStep++)
-        {
-            if(params[STEP_ENABLE+curStep].value > 0.0)  // step on?
-                break;
-        }
+	CV_LINE cvControl;
+	GATE_LINE gateControl;
+	TIMER Timer;
+	STEP_COUNTER stepCounter;
 
-        pp_rev=false;
-    }
+	void _reset();
     void on_loaded();
-    bool pp_rev;
-    int get_next_step(int current);
-    void playCurrent(float deltaTime);
-    void showCurStep();
-    void note_off()
-    {
-        outputs[GATE].value = 0;
-    }
-
-    int inc_step(int step);
-    int dec_step(int step);
+    void playCurrent(float curTime, float deltaTime);
+    void showCurStep(int cur_step);
     bool any();
     SchmittTrigger clockTrigger;
     SchmittTrigger resetTrigger;
-    int curStep;
-    int pulseCounter;
-    int stepDivCounter;
 };
 
 void M581::on_loaded()
 {
-    numSteps = std::round(params[NUM_STEPS].value);
-    runMode = std::round(params[RUN_MODE].value);
-    reset_counters();
+    stepCounter.Set(std::round(params[RUN_MODE].value), std::round(params[NUM_STEPS].value));
+    _reset();
+}
+
+void M581::_reset()
+{
+	Timer.Reset();
+	cvControl.Reset();
+	gateControl.Reset();
+    stepCounter.Reset();
 }
 
 void M581::step()
 {
-    float deltaTime = 1.0 / engineGetSampleRate();
-    numSteps = std::round(params[NUM_STEPS].value);
-    runMode = std::round(params[RUN_MODE].value);
+    float deltaTime = Timer.Step();
+	stepCounter.Set(std::round(params[RUN_MODE].value), std::round(params[NUM_STEPS].value));
+
     if(resetTrigger.process(inputs[RESET].value))
     {
-        reset_counters();
+        _reset();
     } else if(clockTrigger.process(inputs[CLOCK].value) && any())
     {
-        playCurrent(deltaTime);
-
+        playCurrent(Timer.CurTime(), deltaTime);
     }
 }
 
-void M581::playCurrent(float deltaTime)
+void M581::playCurrent(float curTime, float deltaTime)
 {
-    if(++pulseCounter > std::round(params[COUNTER_SWITCH+curStep].value))
+	int cur_step = stepCounter.CurStep();
+	bool play = stepCounter.Play(std::round(params[COUNTER_SWITCH+cur_step].value), &params[STEP_ENABLE]);
+    if(play)
     {
-        pulseCounter = stepDivCounter = 0;
-        curStep = get_next_step(curStep);
+		gateControl.Set(curTime, params[GATE_TIME].value, std::round(params[STEP_DIV].value));
+		cvControl.Set(params[STEP_NOTES + cur_step].value, params[SLIDE_TIME].value);	// 	glide note increment in 1/10 di msec. param = new note value
     }
-    int step_div = 1+std::round(params[STEP_DIV].value);
-    if((stepDivCounter++ % step_div) == 0)
-        note_out();
-    else
-        note_off();
 
-    showCurStep();
+	outputs[CV].value = cvControl.Play(deltaTime, params[STEP_NOTES + cur_step].value);
+	gateControl.Play(play, std::round(params[GATE_SWITCH].value), deltaTime, &outputs[GATE].value);
+    showCurStep(cur_step);
 }
 
-void M581::showCurStep()
+void M581::showCurStep(int cur_step)
 {
-    int lled = curStep % 8;
+    int lled = cur_step % 8;
     for(int k=0; k < 8; k++)
-        lights[LED_STEP+k].value = k==lled? 1.0 : 0.0;
-}
-
-int M581::inc_step(int step)
-{
-    for(int k = 0; k < 8; k++)
-    {
-        if(++step >= numSteps)
-            step = 0;
-        if(params[STEP_ENABLE+step].value > 0.0)  // step on?
-            break;
-    }
-
-    return step;
-}
-
-int M581::dec_step(int step)
-{
-    for(int k = 0; k < 8; k++)
-    {
-        if(--step < 0)
-            step =numSteps - 1;
-        if(params[STEP_ENABLE+step].value > 0.0)  // step on?
-            break;
-    }
-
-    return step;
+        lights[LED_STEP+k].value = k==lled ? 1.0 : 0.0;
 }
 
 bool M581::any()
@@ -176,54 +132,6 @@ bool M581::any()
     }
 
     return false;
-}
-
-int M581::get_next_step(int current)
-{
-    switch(runMode)
-    {
-        case 0: // FWD
-            return inc_step(current);
-
-        case 1: // BWD
-            return dec_step(current);
-
-        case 2: // ping ed anche pong
-            if(pp_rev)
-            {
-                int step = dec_step(current);
-                if( step <= current )
-                    return step;
-                pp_rev = !pp_rev;
-                return inc_step(current);
-            } else
-            {
-                int step = inc_step(current);
-                if(step >= current )
-                    return step;
-                pp_rev = !pp_rev;
-                return dec_step(current);
-            }
-            break;
-
-        case 3: // BROWNIAN
-        {
-            if(testaCroce())
-            {
-                return inc_step(current);
-            } else
-            {
-                return testaCroce() ? dec_step(current) : current;
-            }
-        }
-        break;
-
-        case 4: // At casacc
-            current = getRand(numSteps); // OCIO: step off NON funziona con random!
-            break;
-    }
-
-    return current;
 }
 
 M581Widget::M581Widget()
@@ -278,7 +186,7 @@ M581Widget::M581Widget()
     SigDisplayWidget *display2 = new SigDisplayWidget();
     display2->box.pos = Vec(346, RACK_GRID_HEIGHT-120);
     display2->box.size = Vec(30, 20);
-    display2->value = &module->numSteps;
+    display2->value = module->getAddress(1);
     addChild(display2);
     addParam(createParam<BefacoTinyKnob>(Vec(312, RACK_GRID_HEIGHT-123), module, M581::NUM_STEPS,1.0, 31.0, 8.0));
 
@@ -286,7 +194,8 @@ M581Widget::M581Widget()
     RunModeDisplay *display = new RunModeDisplay();
     display->box.pos = Vec(346, RACK_GRID_HEIGHT-63);
     display->box.size = Vec(42, 20);
-    display->mode = &module->runMode;
+    display->mode = module->getAddress(0);
     addChild(display);
     addParam(createParam<BefacoTinyKnob>(Vec(312, RACK_GRID_HEIGHT-66), module, M581::RUN_MODE,0.0, 4.0, 0.0));
 }
+

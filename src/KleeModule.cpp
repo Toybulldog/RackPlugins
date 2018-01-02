@@ -342,3 +342,26 @@ KleeWidget::KleeWidget()
         addChild(createLight<MediumLight<GreenLight>>(Vec(pos_x[7-k]-12, RACK_GRID_HEIGHT-419+pos_y[7-k]+20), module, Klee::LED_PITCH + k+8));
     }
 }
+
+Menu *KleeWidget::createContextMenu()
+{
+	Menu *menu = ModuleWidget::createContextMenu();
+
+	MenuLabel *spacerLabel = new MenuLabel();
+	menu->addChild(spacerLabel);
+
+	menu->addChild(new KleeMenuItem("Randomize Pitch", this, RANDOMIZE_PITCH));
+	menu->addChild(new KleeMenuItem("Randomize Bus", this, RANDOMIZE_BUS));
+	menu->addChild(new KleeMenuItem("Randomize Load", this, RANDOMIZE_LOAD));
+	return menu;
+}
+
+void KleeWidget::onMenu(MENUACTIONS action)
+{
+    switch(action)
+    {
+        case RANDOMIZE_BUS: std_randomize(Klee::GROUPBUS); break;
+        case RANDOMIZE_PITCH: std_randomize(Klee::PITCH_KNOB); break;
+        case RANDOMIZE_LOAD: std_randomize(Klee::LOAD_BUS); break;
+    }
+}

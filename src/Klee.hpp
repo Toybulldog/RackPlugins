@@ -103,7 +103,7 @@ struct NKK2 : NKK
 {
     void randomize() override
     {
-        if(rand() >= RAND_MAX/2)
+        if(randomf() >= 0.5)
             setValue(1.0);
         else
             setValue(0.0);
@@ -114,8 +114,7 @@ struct NKK3 : NKK
 {
     void randomize() override
     {
-        float f = RAND_MAX;
-        setValue((rand() / f) * 3.0);
+        setValue(randomf() * maxValue);
     }
 };
 
@@ -124,7 +123,7 @@ struct CKSS2 : CKSS
 {
     void randomize() override
     {
-        if(rand() >= RAND_MAX/2)
+        if(randomf() >= 0.5)
             setValue(1.0);
         else
             setValue(0.0);

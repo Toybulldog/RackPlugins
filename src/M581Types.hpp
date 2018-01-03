@@ -1,3 +1,60 @@
+struct M581;
+struct ParamGetter
+{
+public:
+    ParamGetter() {pModule = NULL;}
+    void Set(M581 *module)     {pModule = module;}
+    bool IsEnabled(int numstep);
+    bool IsSlide(int numstep);
+    int GateMode(int numstep);
+    int PulseCount(int numstep);
+    float Note(int numstep);
+
+    // Generic
+    int RunMode() ;
+    int NumSteps();
+    float SlideTime();
+    float GateTime();
+    int StepDivision();
+
+private:
+    M581 *pModule;
+};
+
+struct TIMER
+{
+	void Reset()
+	{
+		prevTime = clock();
+		Begin();
+	}
+
+	void RestartStopWatch() {stopwatch = 0;}
+	void Begin()
+	{
+	    totalPulseTime = 0;
+	    RestartStopWatch();
+    }
+    float Elapsed() {return totalPulseTime;}
+    float StopWatch() {return stopwatch;}
+
+	float Step()
+	{
+		clock_t curTime = clock();
+		clock_t deltaTime = curTime - prevTime;
+		prevTime = curTime;
+		float t = float(deltaTime) / CLOCKS_PER_SEC;
+		totalPulseTime += t;
+		stopwatch += t;
+		return t;
+	}
+
+private:
+	clock_t prevTime;
+	float totalPulseTime;
+	float stopwatch;
+};
+
 struct CV_LINE
 {
 	void Reset()
@@ -6,197 +63,162 @@ struct CV_LINE
 		startNoteValue = -1.0;
 	}
 
-	void Set(float newNote, float slideTime, bool slide_on)
-	{
-		if (startNoteValue < 0.0)
-			startNoteValue = newNote;
+	void Set(ParamGetter *get) {pGet = get;}
 
-        if(slide_on)
-            slideNoteIncrement = (newNote - startNoteValue) / (10000.0*slideTime);
+	void Begin(int cur_step)
+	{
+	    curNote = pGet->Note(cur_step);
+		if(startNoteValue < 0.0)
+			startNoteValue = curNote ;
+
+        if(pGet->IsSlide(cur_step))
+            slideNoteIncrement = (curNote  - startNoteValue) / pGet->SlideTime();
         else
         {
-            startNoteValue = newNote;
+            startNoteValue = curNote;
             slideNoteIncrement = 0;
         }
 	}
 
-	float Play(float deltaTime, float curNote)
+	float Play(float elapsed)
 	{
-		float cv = startNoteValue + slideNoteIncrement * deltaTime;
+		float cv = startNoteValue + slideNoteIncrement * elapsed;
 		if(slideNoteIncrement < 0 && curNote > cv)		// inc negativo ---> cv potrebbe essere INFERIORE a target
-			cv = curNote;		// cv non puo' essere INFERIORE a curstep.value
-		else if(slideNoteIncrement > 0 && curNote < cv) // inc positivo --> cv potrebbe sovraelongare
-			cv = curNote;		// cv non puo' essere SUPERIORE a curstep.value
+        {
+            slideNoteIncrement = 0;
+			cv = startNoteValue = curNote;		// cv non puo' essere INFERIORE a curstep.value
+		} else if(slideNoteIncrement > 0 && curNote < cv) // inc positivo --> cv potrebbe sovraelongare
+		{
+		    slideNoteIncrement = 0;
+			cv = startNoteValue = curNote;		// cv non puo' essere SUPERIORE a curstep.value
+		}
 		return cv;
 	}
 
 private:
+	float curNote;
 	float startNoteValue;
 	float slideNoteIncrement;
+	ParamGetter *pGet;
 };
 
 struct GATE_LINE
 {
 private:
-	int stepDivCounter;
-	int stepDiv;
-	float curGateTime;
-	float totalPulseTime;
-	void gate_len(float deltaTime, float *pOut)
-	{
-		totalPulseTime += deltaTime;
-		if(totalPulseTime > curGateTime)
-			*pOut = LVL_OFF;
-	}
+    ParamGetter *pGet;
+	int curStep;
+	float gate_len(float elapsedTime) 	{return elapsedTime > pGet->GateTime() ? LVL_OFF : LVL_ON; }
 
 public:
 	void Reset()
 	{
-		curGateTime = totalPulseTime = 0;
-		stepDivCounter=stepDiv=0;
+		curStep = 0;
 	}
 
-	void Set(float gateTime, int step_div)
+    void Set(ParamGetter *get) {pGet = get;}
+
+	void Begin(int cur_step)
 	{
-		totalPulseTime = 0;
-		stepDiv = 1 + step_div;
-		curGateTime = gateTime;
-		stepDivCounter=0;
+	    curStep = cur_step;
 	}
 
-	void Play(bool play, int switchMode, float deltaTime, float *pOut)
+	float Play(TIMER *timer, int pulseCount)
 	{
-		switch (switchMode)
+	    float rv = LVL_OFF;
+
+		switch (pGet->GateMode(curStep))
 		{
 			case 0:	// off
-				if(play)
-					*pOut = LVL_OFF;
 				break;
 
 			case 1:  //single pulse
-				if(play)
-					*pOut = LVL_ON;
-				else
-					gate_len(deltaTime, pOut);
+                rv = gate_len(timer->Elapsed());
 				break;
 
 			case 2: // multiple pulse
 			{
-				if((stepDivCounter++ % stepDiv) == 0)
+				if((pulseCount % pGet->StepDivision()) == 0)
 				{
-					*pOut = LVL_ON;
+					rv = gate_len(timer->StopWatch());
 				} else
 				{
-					gate_len(deltaTime, pOut);
+					rv = LVL_OFF;
 				}
 			}
 			break;
 
 			case 3:	// continuo
-				if(play)
-					*pOut = LVL_ON;
+				rv = LVL_ON;
 				break;
 		}
-	}
-};
 
-struct TIMER
-{
-	void Reset()
-	{
-		prevTime = clock();
+		return rv;
 	}
-
-	float Step()
-	{
-		clock_t curTime = clock();
-		clock_t deltaTime = curTime - prevTime;
-		prevTime = curTime;
-		return _toSec(deltaTime);
-	}
-
-private:
-	clock_t prevTime;
-	float _toSec(clock_t t) {return float(t) / CLOCKS_PER_SEC;}
 };
 
 struct STEP_COUNTER
 {
-	void Reset()
+	void Reset(TIMER *timer)
 	{
 		pulseCounter=0;
 		curStep=0;
 		pp_rev=false;
+        timer->Reset();
 	}
 
-	void Set(int rm, int numstp)
-	{
-		runMode=rm;
-		numSteps = numstp;
-	}
+	void Set(ParamGetter *get) 	{pGet = get;}
+	int CurStep() {return curStep % 8;}
+	int PulseCounter() {return pulseCounter;}
 
-	int *getAddress(int var)
+	bool Play(TIMER *timer, int *cur_step)
 	{
-	    switch(var)
-	    {
-	        case 0: return &runMode;
-	        case 1: return &numSteps;
-	    }
-	    return NULL;
-	}
-
-	int CurStep() {return curStep;}
-
-	bool Play(int switchCounter, Param *pSteps)
-	{
-		bool play = ++pulseCounter > switchCounter;
+		bool play = pulseCounter++ >= pGet->PulseCount(curStep);
 		if(play)
 		{
 			pulseCounter = 0;
-			curStep = get_next_step(curStep, pSteps);
-		}
+			curStep = get_next_step(curStep);
+            timer->Begin();
+		} else
+            timer->RestartStopWatch();
+
+		*cur_step = CurStep();
 		return play;
 	}
 
 private:
+    ParamGetter *pGet;
 	int pulseCounter;
 	bool pp_rev;
 	int curStep;
-	int runMode;
-    int numSteps;
 
-	bool testaCroce() {return rand() >= RAND_MAX/2;}
-	int getRand(int rndMax)
-	{
-		float f = rand()/float(RAND_MAX);
-		return int(f * rndMax);
-	}
+	bool testaCroce() {return randomf() > 0.5;}
+	int getRand(int rndMax) 	{return int(randomf() * rndMax);}
 
-	int get_next_step(int current, Param *pSteps)
+	int get_next_step(int current)
 	{
-		switch(runMode)
+		switch(pGet->RunMode())
 		{
 			case 0: // FWD
-				return inc_step(current, pSteps);
+				return inc_step(current);
 
 			case 1: // BWD
-				return dec_step(current, pSteps);
+				return dec_step(current);
 
 			case 2: // ping ed anche pong
 				if(pp_rev)
 				{
-					int step = dec_step(current, pSteps);
+					int step = dec_step(current);
 					if( step <= current )
 						return step;
 					pp_rev = !pp_rev;
-					return inc_step(current, pSteps);
+					return inc_step(current);
 				} else
 				{
-					int step = inc_step(current, pSteps);
+					int step = inc_step(current);
 					if(step >= current )
 						return step;
 					pp_rev = !pp_rev;
-					return dec_step(current, pSteps);
+					return dec_step(current);
 				}
 				break;
 
@@ -204,42 +226,42 @@ private:
 			{
 				if(testaCroce())
 				{
-					return inc_step(current, pSteps);
+					return inc_step(current);
 				} else
 				{
-					return testaCroce() ? dec_step(current, pSteps) : current;
+					return testaCroce() ? dec_step(current) : current;
 				}
 			}
 			break;
 
 			case 4: // At casacc
-				current = getRand(numSteps); // OCIO: step off NON funziona con random!
+				current = getRand(pGet->NumSteps()); // OCIO: step off NON funziona con random!
 				break;
 		}
 
 		return current;
 	}
 
-	int inc_step(int step, Param *pSteps)
+	int inc_step(int step)
 	{
 		for(int k = 0; k < 8; k++)
 		{
-			if(++step >= numSteps)
+			if(++step >= pGet->NumSteps())
 				step = 0;
-			if(pSteps[step].value > 0.0)  // step on?
+			if(pGet->IsEnabled(step))  // step on?
 				break;
 		}
 
 		return step;
 	}
 
-	int dec_step(int step, Param *pSteps)
+	int dec_step(int step)
 	{
 		for(int k = 0; k < 8; k++)
 		{
 			if(--step < 0)
-				step =numSteps - 1;
-			if(pSteps[step].value > 0.0)  // step on?
+				step =pGet->NumSteps() - 1;
+			if(pGet->IsEnabled(step))  // step on?
 				break;
 		}
 
@@ -247,3 +269,4 @@ private:
 	}
 
 };
+

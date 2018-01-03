@@ -64,34 +64,53 @@ public:
     Menu *createContextMenu() override;
     void onMenu(MENUACTIONS action);
 
-
 };
 
-struct GateSwitch : SVGSwitch, ToggleSwitch
+struct GateSwitch : SVGSlider
 {
 	GateSwitch()
 	{
-		addFrame(SVG::load(assetPlugin(plugin, "res/GateSwitch_0.svg")));
-		addFrame(SVG::load(assetPlugin(plugin, "res/GateSwitch_1.svg")));
-		addFrame(SVG::load(assetPlugin(plugin, "res/GateSwitch_2.svg")));
-		addFrame(SVG::load(assetPlugin(plugin, "res/GateSwitch_3.svg")));
+		snap = true;
+		maxHandlePos = Vec(-4, 0);
+		minHandlePos = Vec(-4, 37);
+		background->svg = SVG::load(assetPlugin(plugin,"res/counterSwitchShort.svg"));
+		background->wrap();
+		background->box.pos = Vec(0, 0);
+		box.size = background->box.size;
+		handle->svg = SVG::load(assetPlugin(plugin,"res/counterSwitchPotHandle.svg"));
+		handle->wrap();
 	}
+
+    void randomize() override {setValue(roundf(randomf() * maxValue));  }
+
 };
 
 
-struct CounterSwitch : SVGSwitch, ToggleSwitch
+struct CounterSwitch : SVGSlider
 {
 	CounterSwitch()
 	{
-		addFrame(SVG::load(assetPlugin(plugin, "res/CounterSwitch_0.svg")));
-		addFrame(SVG::load(assetPlugin(plugin, "res/CounterSwitch_1.svg")));
-		addFrame(SVG::load(assetPlugin(plugin, "res/CounterSwitch_2.svg")));
-		addFrame(SVG::load(assetPlugin(plugin, "res/CounterSwitch_3.svg")));
-		addFrame(SVG::load(assetPlugin(plugin, "res/CounterSwitch_4.svg")));
-		addFrame(SVG::load(assetPlugin(plugin, "res/CounterSwitch_5.svg")));
-		addFrame(SVG::load(assetPlugin(plugin, "res/CounterSwitch_6.svg")));
-		addFrame(SVG::load(assetPlugin(plugin, "res/CounterSwitch_7.svg")));
+		snap = true;
+		maxHandlePos = Vec(-4, 0);
+		minHandlePos = Vec(-4, 80);
+		background->svg = SVG::load(assetPlugin(plugin,"res/counterSwitchPot.svg"));
+		background->wrap();
+		background->box.pos = Vec(0, 0);
+		box.size = background->box.size;
+		handle->svg = SVG::load(assetPlugin(plugin,"res/counterSwitchPotHandle.svg"));
+		handle->wrap();
 	}
+
+	void randomize() override {setValue(roundf(randomf() * maxValue));  }
+};
+
+struct BefacoSnappedTinyKnob : BefacoTinyKnob
+{
+    BefacoSnappedTinyKnob() : BefacoTinyKnob()
+    {
+        snap = true;
+    }
+    void randomize() override {setValue(roundf(rescalef(randomf(), 0.0, 1.0, minValue, maxValue))); }
 };
 
 struct SigDisplayWidget : TransparentWidget {

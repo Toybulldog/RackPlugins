@@ -169,17 +169,17 @@ M581Widget::M581Widget()
     for(int k=0; k< 8; k++)
     {
          // step enable
-        addParam(createParam<CKSSThree>(Vec(38 + 35 * k, RACK_GRID_HEIGHT-58), module, M581::STEP_ENABLE + k, 0.0, 2.0, 1.0));
+        addParam(createParam<CKSSThree>(Vec(36 + 35 * k, RACK_GRID_HEIGHT-58), module, M581::STEP_ENABLE + k, 0.0, 2.0, 1.0));
         // Gate switches
-        addParam(createParam<GateSwitch>(Vec(37 + 35 * k, RACK_GRID_HEIGHT-140), module, M581::GATE_SWITCH + k, 0.0, 3.0, 0.0));
+        addParam(createParam<GateSwitch>(Vec(39 + 35 * k, RACK_GRID_HEIGHT-140), module, M581::GATE_SWITCH + k, 0.0, 3.0, 2.0));
         // Counter switches
-        addParam(createParam<CounterSwitch>(Vec(37 + 35 * k, RACK_GRID_HEIGHT-250), module, M581::COUNTER_SWITCH + k, 0.0, 7.0, 0.0));
+        addParam(createParam<CounterSwitch>(Vec(39 + 35 * k, RACK_GRID_HEIGHT-246), module, M581::COUNTER_SWITCH + k, 0.0, 7.0, 0.0));
 
         // step notes
-        addParam(createParam<BefacoSlidePot>(Vec(38 + 35 * k, RACK_GRID_HEIGHT-368), module, M581::STEP_NOTES + k, 0.001, 1.0, 0.5));
+        addParam(createParam<BefacoSlidePot>(Vec(35 + 35 * k, RACK_GRID_HEIGHT-368), module, M581::STEP_NOTES + k, 0.001, 1.0, 0.5));
 
         // step leds
-        addChild(createLight<LargeLight<RedLight>>(Vec(38 + 35 * k, RACK_GRID_HEIGHT-80), module, M581::LED_STEP + k));
+        addChild(createLight<LargeLight<RedLight>>(Vec(36 + 35 * k, RACK_GRID_HEIGHT-80), module, M581::LED_STEP + k));
         // subdiv leds
 
         addChild(createLight<TinyLight<RedLight>>(Vec(26, RACK_GRID_HEIGHT-162 - 11.28 * k), module, M581::LED_SUBDIV + k));
@@ -210,7 +210,7 @@ M581Widget::M581Widget()
     display2->box.size = Vec(30, 20);
     display2->value = module->getAddress(1);
     addChild(display2);
-    addParam(createParam<BefacoTinyKnob>(Vec(312, RACK_GRID_HEIGHT-123), module, M581::NUM_STEPS,1.0, 31.0, 8.0));
+    addParam(createParam<BefacoSnappedTinyKnob>(Vec(312, RACK_GRID_HEIGHT-123), module, M581::NUM_STEPS,1.0, 31.0, 8.0));
 
     // run mode
     RunModeDisplay *display = new RunModeDisplay();
@@ -218,7 +218,7 @@ M581Widget::M581Widget()
     display->box.size = Vec(42, 20);
     display->mode = module->getAddress(0);
     addChild(display);
-    addParam(createParam<BefacoTinyKnob>(Vec(312, RACK_GRID_HEIGHT-66), module, M581::RUN_MODE,0.0, 4.0, 0.0));
+    addParam(createParam<BefacoSnappedTinyKnob>(Vec(312, RACK_GRID_HEIGHT-66), module, M581::RUN_MODE,0.0, 4.0, 0.0));
 }
 
 Menu *M581Widget::createContextMenu()

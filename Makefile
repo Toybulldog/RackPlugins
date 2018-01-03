@@ -29,3 +29,4 @@ dist: all
 	cp -R res/*.svg dist/$(SLUG)/res/
 	cp -R res/Segment7Standard.ttf dist/$(SLUG)/res/
 	cd dist && zip -5 -r $(SLUG)-$(VERSION)-$(ARCH).zip $(SLUG)
+	sha256sum dist/$(SLUG)-$(VERSION)-$(ARCH).zip --tag

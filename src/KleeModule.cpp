@@ -64,8 +64,6 @@ struct Klee : Module
 
 private:
     const float pulseTime = 0.002;      //2msec trigger
-    const float LVL_ON = 10.0;
-    const float LVL_OFF = 0.0;
     void showValues();
     void sr_rotate();
     bool chance();
@@ -342,5 +340,36 @@ KleeWidget::KleeWidget()
         addChild(createLight<MediumLight<RedLight>>(Vec(pos_x[k]+38, RACK_GRID_HEIGHT-pos_y[k]+20), module, Klee::LED_PITCH + k));
         addParam(createParam<Davies1900hBlackKnob>(Vec(pos_x[7-k], RACK_GRID_HEIGHT-419+pos_y[7-k]), module, Klee::PITCH_KNOB + 8+ k, 0.0, 1.0, 0.125));
         addChild(createLight<MediumLight<GreenLight>>(Vec(pos_x[7-k]-12, RACK_GRID_HEIGHT-419+pos_y[7-k]+20), module, Klee::LED_PITCH + k+8));
+    }
+}
+
+Menu *KleeWidget::createContextMenu()
+{
+	Menu *menu = ModuleWidget::createContextMenu();
+
+	MenuLabel *spacerLabel = new MenuLabel();
+	menu->addChild(spacerLabel);
+
+	menu->addChild(new KleeMenuItem("Range -> 1V", this, SET_RANGE_1V));
+	menu->addChild(new KleeMenuItem("Randomize Pitch", this, RANDOMIZE_PITCH));
+	menu->addChild(new KleeMenuItem("Randomize Bus", this, RANDOMIZE_BUS));
+	menu->addChild(new KleeMenuItem("Randomize Load", this, RANDOMIZE_LOAD));
+	return menu;
+}
+
+void KleeWidget::onMenu(MENUACTIONS action)
+{
+    switch(action)
+    {
+        case RANDOMIZE_BUS: std_randomize(Klee::GROUPBUS); break;
+        case RANDOMIZE_PITCH: std_randomize(Klee::PITCH_KNOB); break;
+        case RANDOMIZE_LOAD: std_randomize(Klee::LOAD_BUS); break;
+        case SET_RANGE_1V:
+        {
+            int index = getParamIndex(Klee::RANGE);
+            if(index >= 0)
+                params[index]->setValue(1.0);
+        }
+        break;
     }
 }

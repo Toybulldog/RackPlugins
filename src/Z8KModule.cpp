@@ -41,8 +41,11 @@ struct Z8K : Module
 
     enum LightIds
     {
-        LED_1,
-        NUM_LIGHTS = LED_1+16
+        LED_ROW,
+        LED_COL = LED_ROW+16,
+        LED_VERT = LED_COL+16,
+        LED_HORIZ = LED_VERT+16,
+        NUM_LIGHTS = LED_HORIZ+16
     };
 
 	enum SequencerIds
@@ -81,41 +84,26 @@ void Z8K::on_loaded()
 	{
 		int base = VOLTAGE_1+4*k;
 		std::vector<int> steps = {base, base+1, base+2, base+3};
-		seq[SEQ_1+k].Init(&inputs[RESET_1+k], &inputs[DIR_1+k], &inputs[CLOCK_1+k], &outputs[CV_1+k], params, steps);
+		seq[SEQ_1+k].Init(&inputs[RESET_1+k], &inputs[DIR_1+k], &inputs[CLOCK_1+k], &outputs[CV_1+k], &lights[LED_ROW], params, steps);
 	}
 	// sequencer A-D
 	for(int k = 0; k < 4; k++)
 	{
 		std::vector<int> steps = {k, k+4, k+8, k+12};
-		seq[SEQ_A+k].Init(&inputs[RESET_A+k], &inputs[DIR_A+k], &inputs[CLOCK_A+k], &outputs[CV_A+k], params, steps);
+		seq[SEQ_A+k].Init(&inputs[RESET_A+k], &inputs[DIR_A+k], &inputs[CLOCK_A+k], &outputs[CV_A+k],  &lights[LED_COL], params, steps);
 	}
 	// horiz
 	std::vector<int> steps_h = {0,1,2,3,7,6,5,4,8,9,10,11,15,14,13,12};
-	seq[SEQ_HORIZ].Init(&inputs[RESET_HORIZ], &inputs[DIR_HORIZ], &inputs[CLOCK_HORIZ], &outputs[CV_HORIZ], params, steps_h);
+	seq[SEQ_HORIZ].Init(&inputs[RESET_HORIZ], &inputs[DIR_HORIZ], &inputs[CLOCK_HORIZ], &outputs[CV_HORIZ], &lights[LED_HORIZ], params, steps_h);
 	//vert
 	std::vector<int> steps_v = {0,4,8,12,13,9,5,1,2,6,10,14,15,11,7,3};
-	seq[SEQ_VERT].Init(&inputs[RESET_VERT], &inputs[DIR_VERT], &inputs[CLOCK_VERT], &outputs[CV_VERT], params, steps_v);
+	seq[SEQ_VERT].Init(&inputs[RESET_VERT], &inputs[DIR_VERT], &inputs[CLOCK_VERT], &outputs[CV_VERT],  &lights[LED_VERT], params, steps_v);
 }
 
 void Z8K::step()
 {
-	int led[NUM_LIGHTS];
-	for(int k = 0; k < NUM_LIGHTS; k++)
-		led[k]=0;	// led off. bit 0: row sequencer (1-4); bit 1: column sequencer (A-D); bit 2: horizontal sequencer; bit 3: vertical sequencer
-
 	for(int k = 0; k < NUM_SEQUENCERS; k++)
-	{
-		int curstep = seq[k].Step();
-		switch(k)
-		{
-			case SEQ_VERT: led[curstep] |= 0x08; break;
-			case SEQ_HORIZ: led[curstep] |= 0x04; break;
-			default: led[curstep] |= (k < SEQ_A) ? 0x01 : 0x02; break;
-		}
-	}
-
-	for(int k = 0; k < NUM_LIGHTS; k++)
-		lights[k].value = float(led[k])/15.0;
+		seq[k].Step();
 }
 
 Z8KWidget::Z8KWidget()
@@ -161,7 +149,10 @@ Z8KWidget::Z8KWidget()
 		{
 			int n = c+r*4;
 			addParam(createParam<Davies1900hBlackKnob>(Vec(x+dist_h*c, y + dist_v*r), module, Z8K::VOLTAGE_1+n, 0.005, 1.0, 0.25));    // in sec
-			addChild(createLight<LargeLight<RedLight>>(Vec(x+2*dist_h/3+c*dist_h, y +2*dist_v/3+ dist_v*r), module, Z8K::LED_1 + n));
+			addChild(createLight<SmallLight<RedLight>>(Vec(x+2*dist_h/3+c*dist_h-5, y +2*dist_v/3+ dist_v*r-5), module, Z8K::LED_ROW + n));
+			addChild(createLight<SmallLight<GreenLight>>(Vec(x+2*dist_h/3+c*dist_h+5, y +2*dist_v/3+ dist_v*r-5), module, Z8K::LED_COL + n));
+			addChild(createLight<SmallLight<YellowLight>>(Vec(x+2*dist_h/3+c*dist_h-5, y +2*dist_v/3+ dist_v*r+5), module, Z8K::LED_VERT + n));
+			addChild(createLight<SmallLight<BlueLight>>(Vec(x+2*dist_h/3+c*dist_h+5, y +2*dist_v/3+ dist_v*r+5), module, Z8K::LED_HORIZ + n));
 
 			if(r == 3)
 				addOutput(createOutput<PJ301GPort>(Vec(x+dist_h*c+7, y +dist_v*4-dist_v/3), module, Z8K::CV_A+c));

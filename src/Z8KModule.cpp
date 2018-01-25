@@ -75,7 +75,7 @@ private:
 };
 
 void Z8K::on_loaded()
-{/*
+{
 	// sequencer 1-4
 	for(int k = 0; k < 4; k++)
 	{
@@ -95,11 +95,10 @@ void Z8K::on_loaded()
 	//vert
 	std::vector<int> steps_v = {0,4,8,12,13,9,5,1,2,6,10,14,15,11,7,3};
 	seq[SEQ_VERT].Init(&inputs[RESET_VERT], &inputs[DIR_VERT], &inputs[CLOCK_VERT], &outputs[CV_VERT], params, steps_v);
-	*/
 }
 
 void Z8K::step()
-{/*
+{
 	int led[NUM_LIGHTS];
 	for(int k = 0; k < NUM_LIGHTS; k++)
 		led[k]=0;	// led off. bit 0: row sequencer (1-4); bit 1: column sequencer (A-D); bit 2: horizontal sequencer; bit 3: vertical sequencer
@@ -116,14 +115,14 @@ void Z8K::step()
 	}
 
 	for(int k = 0; k < NUM_LIGHTS; k++)
-		lights[k].value = float(led[k])/15.0;*/
+		lights[k].value = float(led[k])/15.0;
 }
 
 Z8KWidget::Z8KWidget()
 {
     Z8K *module = new Z8K();
     setModule(module);
-    box.size = Vec(27 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT);
+    box.size = Vec(28 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT);
     SVGPanel *panel = new SVGPanel();
     panel->box.size = box.size;
     panel->setBackground(SVG::load(assetPlugin(plugin, "res/Z8KModule.svg")));
@@ -134,46 +133,51 @@ Z8KWidget::Z8KWidget()
     addChild(createScrew<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, box.size.y - RACK_GRID_WIDTH)));
 
 	int x = 10;
-	int y = 10;
-	//
+	int y = 30;
+	int dist_v = 38;
+	int dist_h = 32;
     for(int k=0; k < 4; k++)
     {
-		addInput(createInput<PJ301YPort>(Vec(x, y + k * 20), module, Z8K::RESET_1+k));
-		addInput(createInput<PJ301WPort>(Vec(x+20, y + k * 20), module, Z8K::DIR_1+k));
-		addInput(createInput<PJ301RPort>(Vec(x+40, y + k * 20), module, Z8K::CLOCK_1+k));
-	}
-/*
-	y += 5 * 20;
-	for(int k=0; k < 4; k++)
-    {
-		addInput(createInput<PJ301YPort>(Vec(x, y + k * 20), module, Z8K::RESET_A+k));
-		addInput(createInput<PJ301WPort>(Vec(x+20, y + k * 20), module, Z8K::DIR_A+k));
-		addInput(createInput<PJ301RPort>(Vec(x+40, y + k * 20), module, Z8K::CLOCK_A+k));
+		addInput(createInput<PJ301YPort>(Vec(x, y + k * dist_v), module, Z8K::RESET_1+k));
+		addInput(createInput<PJ301WPort>(Vec(x+dist_h, y + k * dist_v), module, Z8K::DIR_1+k));
+		addInput(createInput<PJ301RPort>(Vec(x+2*dist_h, y + k * dist_v), module, Z8K::CLOCK_1+k));
 	}
 
-	y = 15;
-	x = 40;
+	y += 5 * dist_v;
+	for(int k=0; k < 4; k++)
+    {
+		addInput(createInput<PJ301YPort>(Vec(x, y + k * dist_v), module, Z8K::RESET_A+k));
+		addInput(createInput<PJ301WPort>(Vec(x+dist_h, y + k * dist_v), module, Z8K::DIR_A+k));
+		addInput(createInput<PJ301RPort>(Vec(x+2*dist_h, y + k * dist_v), module, Z8K::CLOCK_A+k));
+	}
+
+	y = 35;
+	x += 2*dist_h + 40;
+	dist_h = 64;
+	dist_v = 65;
 	for(int r=0; r < 4; r++)
 	{
 		for(int c=0; c < 4; c++)
 		{
 			int n = c+r*4;
-			addParam(createParam<Davies1900hBlackKnob>(Vec(x+30*c, y + 30*r), module, Z8K::VOLTAGE_1+n, 0.005, 1.0, 0.25));    // in sec
-			addChild(createLight<LargeLight<MultiColorLight>>(Vec(x+30*c+15, y + 30*r-15), module, Z8K::LED_1 + n));
+			addParam(createParam<Davies1900hBlackKnob>(Vec(x+dist_h*c, y + dist_v*r), module, Z8K::VOLTAGE_1+n, 0.005, 1.0, 0.25));    // in sec
+			addChild(createLight<LargeLight<RedLight>>(Vec(x+2*dist_h/3+c*dist_h, y +2*dist_v/3+ dist_v*r), module, Z8K::LED_1 + n));
 
 			if(r == 3)
-				addOutput(createOutput<PJ301GPort>(Vec(x+30*c, y + 30*4), module, Z8K::CV_A+c));
+				addOutput(createOutput<PJ301GPort>(Vec(x+dist_h*c+7, y +dist_v*4-dist_v/3), module, Z8K::CV_A+c));
 		}
-		addOutput(createOutput<PJ301GPort>(Vec(x+30*4, y + 30*r), module, Z8K::CV_1+r));
+		addOutput(createOutput<PJ301GPort>(Vec(box.size.x - 40, y+5 + dist_v*r), module, Z8K::CV_1+r));
 	}
 
-	y = 120;
+	y += dist_v * 4 + 40;
+	dist_h /= 2;
+	dist_v = 20;
 	for(int k=0; k < 2; k++)
     {
-		int px = x + k * 100;
+		int px =7+x + k * 4 * dist_h;
 		addInput(createInput<PJ301YPort>(Vec(px, y), module, Z8K::RESET_VERT+k));
-		addInput(createInput<PJ301WPort>(Vec(px+20, y - 20), module, Z8K::DIR_VERT+k));
-		addInput(createInput<PJ301RPort>(Vec(px+40, y), module, Z8K::CLOCK_VERT+k));
-		addOutput(createOutput<PJ301GPort>(Vec(px+60, y - 20), module, Z8K::CV_VERT+k));
-	}*/
+		addInput(createInput<PJ301WPort>(Vec(px+dist_h, y - dist_v), module, Z8K::DIR_VERT+k));
+		addInput(createInput<PJ301RPort>(Vec(px+2*dist_h, y), module, Z8K::CLOCK_VERT+k));
+		addOutput(createOutput<PJ301GPort>(Vec(px+3*dist_h, y -dist_v), module, Z8K::CV_VERT+k));
+	}
 }

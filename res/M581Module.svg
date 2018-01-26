@@ -2362,6 +2362,16 @@
     .fil2 {fill:#DA251D}
     .fil1 {fill:white}
    ]]></style>
+    <style
+       id="style2"
+       type="text/css"><![CDATA[
+    .str0 {stroke:#1F1A17;stroke-width:0.0762}
+    .str1 {stroke:#DA251D;stroke-width:0.0762}
+    .str2 {stroke:white;stroke-width:0.0762}
+    .fil0 {fill:#1F1A17}
+    .fil2 {fill:#DA251D}
+    .fil1 {fill:white}
+   ]]></style>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -2370,9 +2380,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="-204.09229"
-     inkscape:cy="195.63669"
+     inkscape:zoom="5.6568542"
+     inkscape:cx="15.147985"
+     inkscape:cy="99.739611"
      inkscape:document-units="mm"
      inkscape:current-layer="layer2"
      showgrid="false"
@@ -2382,7 +2392,7 @@
      inkscape:bbox-nodes="true"
      inkscape:snap-bbox-edge-midpoints="true"
      inkscape:window-width="1920"
-     inkscape:window-height="953"
+     inkscape:window-height="993"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -2394,7 +2404,7 @@
        id="guide556"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="21.265887,11.44323"
+       position="-70.908338,9.0289069"
        orientation="0,1"
        id="guide694"
        inkscape:locked="false" />
@@ -2527,7 +2537,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
         <dc:description>15 x 380
 La y e' width - posizione - 28
 </dc:description>
@@ -2538,7 +2548,8 @@ La y e' width - posizione - 28
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Sfondoni"
-     style="display:inline;opacity:1">
+     style="display:inline;opacity:1"
+     sodipodi:insensitive="true">
     <rect
        style="opacity:1;fill:#ececec;stroke-width:0.19580078"
        id="rect1144"
@@ -2723,6 +2734,133 @@ La y e' width - posizione - 28
        id="rect1521"
        style="opacity:1;fill:#ffffff;stroke:none;stroke-width:1.66636777;stroke-miterlimit:4;stroke-dasharray:none"
        ry="0.80000001" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer6"
+     inkscape:label="logo"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <g
+       style="clip-rule:evenodd;fill-rule:evenodd;image-rendering:optimizeQuality;shape-rendering:geometricPrecision;text-rendering:geometricPrecision"
+       id="g9366"
+       transform="matrix(0.0625,0,0,0.0625,5.0987566,72.628413)">
+      <g
+         id="g941">
+        <g
+           id="g922">
+          <rect
+             style="fill:#000000;stroke:none;stroke-width:0.20094904"
+             y="105.19479"
+             x="-39.018856"
+             height="137.03459"
+             width="30.330647"
+             transform="rotate(-45)"
+             class="fil0 str0"
+             id="_196666080" />
+          <rect
+             style="fill:#da251d;stroke:none;stroke-width:0.20094904"
+             y="-92.370834"
+             x="-188.87741"
+             height="137.03459"
+             width="30.330647"
+             transform="rotate(-135)"
+             class="fil2 str1"
+             id="_196664592" />
+        </g>
+        <g
+           id="g918">
+          <circle
+             id="_196670520"
+             class="fil0 str0"
+             cx="105.966"
+             cy="139.7"
+             r="81.848534"
+             style="fill:none;stroke:#000000;stroke-width:17.19791603;stroke-miterlimit:4;stroke-dasharray:none" />
+          <rect
+             y="39.243301"
+             x="85.549797"
+             height="14.20678"
+             width="40.832603"
+             id="rect875"
+             style="opacity:1;fill:#000000;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none" />
+          <rect
+             style="opacity:1;fill:#000000;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+             id="rect881"
+             width="40.832603"
+             height="14.20678"
+             x="85.549797"
+             y="225.94951" />
+          <rect
+             transform="rotate(90)"
+             style="opacity:1;fill:#000000;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+             id="rect885"
+             width="40.832603"
+             height="14.20678"
+             x="119.28303"
+             y="-206.423" />
+          <rect
+             y="-19.716515"
+             x="119.28302"
+             height="14.20678"
+             width="40.832603"
+             id="rect889"
+             style="opacity:1;fill:#000000;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+             transform="rotate(90)" />
+          <rect
+             y="-274.16934"
+             x="3.4366226"
+             height="14.20678"
+             width="40.832603"
+             id="rect893"
+             style="opacity:1;fill:#000000;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+             transform="rotate(135)" />
+          <rect
+             transform="rotate(135)"
+             style="opacity:1;fill:#000000;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+             id="rect895"
+             width="40.832603"
+             height="14.20678"
+             x="3.4366229"
+             y="-87.462669" />
+          <rect
+             y="63.799263"
+             x="-195.53125"
+             height="14.20678"
+             width="40.832603"
+             id="rect897"
+             style="opacity:1;fill:#000000;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+             transform="rotate(-135)" />
+          <rect
+             transform="rotate(-135)"
+             style="opacity:1;fill:#000000;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+             id="rect899"
+             width="40.832603"
+             height="14.20678"
+             x="-195.53117"
+             y="-122.90741" />
+        </g>
+        <g
+           id="g907"
+           transform="translate(-1.6056551)">
+          <polygon
+             id="_196665264"
+             class="fil2 str0"
+             points="200.556,75.7262 207.953,75.7262 189.431,50.734 171.116,75.7262 178.83,75.7262 178.747,101.794 200.556,101.754 "
+             style="fill:#da251d;stroke:#000000;stroke-width:0.0762" />
+          <polygon
+             id="_196665048"
+             class="fil0 str2"
+             points="200.556,202.598 207.953,202.598 189.431,177.606 171.116,202.598 178.83,202.598 178.747,228.666 200.556,228.625 "
+             style="fill:#1f1a17;stroke:#ffffff;stroke-width:0.0762" />
+          <polygon
+             id="_196666392"
+             class="fil1 str1"
+             points="200.556,139.162 207.953,139.162 189.431,114.17 171.116,139.162 178.83,139.162 178.747,165.23 200.556,165.189 "
+             style="fill:#ffffff;stroke:#ff0000;stroke-width:0.0762" />
+        </g>
+      </g>
+    </g>
   </g>
   <g
      style="display:inline"

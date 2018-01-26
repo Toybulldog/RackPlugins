@@ -148,7 +148,7 @@ Z8KWidget::Z8KWidget()
 		for(int c=0; c < 4; c++)
 		{
 			int n = c+r*4;
-			addParam(createParam<Davies1900hBlackKnob>(Vec(x+dist_h*c, y + dist_v*r), module, Z8K::VOLTAGE_1+n, 0.005, 1.0, 0.25));    // in sec
+			addParam(createParam<Davies1900hBlackKnob>(Vec(x+dist_h*c, y + dist_v*r), module, Z8K::VOLTAGE_1+n, 0.005, 6.0, 1.0));
 			addChild(createLight<SmallLight<RedLight>>(Vec(x+2*dist_h/3+c*dist_h-5, y +2*dist_v/3+ dist_v*r-5), module, Z8K::LED_ROW + n));
 			addChild(createLight<SmallLight<GreenLight>>(Vec(x+2*dist_h/3+c*dist_h+5, y +2*dist_v/3+ dist_v*r-5), module, Z8K::LED_COL + n));
 			addChild(createLight<SmallLight<YellowLight>>(Vec(x+2*dist_h/3+c*dist_h-5, y +2*dist_v/3+ dist_v*r+5), module, Z8K::LED_VERT + n));

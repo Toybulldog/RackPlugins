@@ -58,34 +58,3 @@ private:
 
 
 
-struct NKK2 : NKK
-{
-    void randomize() override
-    {
-        if(randomf() >= 0.5)
-            setValue(1.0);
-        else
-            setValue(0.0);
-    }
-};
-
-struct NKK3 : NKK
-{
-    void randomize() override
-    {
-        setValue(randomf() * maxValue);
-    }
-};
-
-
-struct CKSS2 : CKSS
-{
-    void randomize() override
-    {
-        if(randomf() >= 0.5)
-            setValue(1.0);
-        else
-            setValue(0.0);
-    }
-};
-

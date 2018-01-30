@@ -91,6 +91,30 @@ void Renato::step()
     }
 }
 
+Menu *RenatoWidget::createContextMenu()
+{
+	Menu *menu = ModuleWidget::createContextMenu();
+
+	MenuLabel *spacerLabel = new MenuLabel();
+	menu->addChild(spacerLabel);
+
+	menu->addChild(new KleeMenuItem("Randomize Pitch", this, RANDOMIZE_PITCH));
+	menu->addChild(new KleeMenuItem("Randomize Gate Xs", this, RANDOMIZE_GATEX));
+	menu->addChild(new KleeMenuItem("Randomize Gate Ys", this, RANDOMIZE_GATEY));
+	menu->addChild(new KleeMenuItem("Randomize Access", this, RANDOMIZE_ACCESS));
+	return menu;
+}
+
+void RenatoWidget::onMenu(MENUACTIONS action)
+{
+    switch(action)
+    {
+        case RANDOMIZE_PITCH: std_randomize(Renato::VOLTAGE_1); break;
+        case RANDOMIZE_GATEX: std_randomize(Renato::GATEX_1); break;
+        case RANDOMIZE_GATEY: std_randomize(Renato::GATEY_1); break;
+        case RANDOMIZE_ACCESS: std_randomize(Renato::ACCESS_1); break;
+    }
+}
 
 RenatoWidget::RenatoWidget()
 {
@@ -114,11 +138,11 @@ RenatoWidget::RenatoWidget()
     addInput(createInput<PJ301MPort>(Vec(x, y ), module, Renato::YCLK));
     x+= 2*dist_h;
 
-	addParam(createParam<NKK>(Vec(x,y-10), module, Renato::COUNTMODE_X, 0.0, 2.0, 0.0));
+	addParam(createParam<NKK2>(Vec(x,y-10), module, Renato::COUNTMODE_X, 0.0, 2.0, 0.0));
 	x+= 5*dist_h/3;
-	addParam(createParam<NKK>(Vec(x,y-10), module, Renato::COUNTMODE_Y, 0.0, 2.0, 0.0));
+	addParam(createParam<NKK2>(Vec(x,y-10), module, Renato::COUNTMODE_Y, 0.0, 2.0, 0.0));
 	x+= 5*dist_h/3;
-	addParam(createParam<NKK>(Vec(x,y-10), module, Renato::SEEKSLEEP, 0.0, 1.0, 0.0));
+	addParam(createParam<NKK2>(Vec(x,y-10), module, Renato::SEEKSLEEP, 0.0, 1.0, 0.0));
 
 	x = box.size.x - 3 * dist_h-20;
     addOutput(createOutput<PJ301MPort>(Vec(x, y ), module, Renato::CV));

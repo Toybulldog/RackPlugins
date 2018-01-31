@@ -139,8 +139,12 @@ void M581::step()
     }
 
     #ifdef LAUNCHPAD
-    connected = drv->Connected() ? 1.0 : 0.0;
-    drv->ProcessLaunchpad();
+    if(drv->Connected())
+    {
+        connected = 1.0;
+        drv->ProcessLaunchpad();
+    } else
+        connected = 0.0;
     #endif
 }
 

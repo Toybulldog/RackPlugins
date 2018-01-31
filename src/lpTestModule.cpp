@@ -1,9 +1,8 @@
 #include "common.hpp"
+#ifdef TEST_MODULE
 #include "lpTestModule.hpp"
 #include <string.h>
 #include "dsp/digital.hpp"
-
-#ifdef TEST_MODULE
 
 struct LaunchpadTest : Module
 {
@@ -28,7 +27,7 @@ struct LaunchpadTest : Module
 		NUM_LIGHTS
 	};
 	LaunchpadTest() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {
-        drv = new LaunchpadBindingDriver(Scene1, 1);
+        drv = new LaunchpadBindingDriver(Scene8, 1);
     }
     ~LaunchpadTest()
     {

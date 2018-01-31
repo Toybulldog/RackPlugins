@@ -65,8 +65,9 @@ public:
 	static LaunchpadMessage *RegisterScene(LaunchpadMessage *dest, LaunchpadScene scene, bool registr)
 	{
 	    dest->cmd = REGISTERSCENE;
-	    dest->currentScene = scene;
+	    dest->currentScene = SceneAll;
 		dest->param0 = registr ? 1 : 0;
+		dest->param1 = scene;
 		return dest;
 	}
 	static LaunchpadMessage *SetScene(LaunchpadMessage *dest, LaunchpadScene scene)
@@ -152,6 +153,7 @@ public:
 		numPages = maxPage;
 		myScene = scene;
 		Reset();
+        lastCheck = 0;
 		registerMyScene(true);
 	}
 
@@ -288,15 +290,18 @@ protected:
 		return -1;
 	}
 
-
-private:
-    void registerMyScene(bool registr)
+   void registerMyScene(bool registr)
     {
+        lastCheck = GetTickCount();
 		LaunchpadMessage dest;
 		ILaunchpadPro::RegisterScene(&dest, myScene, registr);
 		if(comm->Open())
 			comm->Write(dest);
+
     }
+    uint32_t lastCheck;
+
+private:
 
 	void drive_autopage()
 	{
@@ -374,14 +379,15 @@ struct launchpadControl
 {
 public:
 	virtual ~launchpadControl() {};
-	void Draw(launchpadDriver *drv)
+	void Draw(launchpadDriver *drv, bool force = false)
 	{
-		if(m_dirty && (drv->GetPage() == m_page || m_page == launchpadDriver::ALL_PAGES))
+		if((force || m_dirty) && (drv->GetPage() == m_page || m_page == launchpadDriver::ALL_PAGES))
 		{
 			draw(drv);
-			m_dirty = false;
-			m_lastDrawnValue = getValue();
 		}
+        m_dirty = false;
+        m_lastDrawnValue = getValue();
+
 	}
 	bool Intersect(int page, LaunchpadKey key, bool shift)    {return m_shifted != shift || page != m_page ? false : intersect(key);}
 
@@ -479,6 +485,10 @@ public:
 	{
 	    processGUI();
         processLaunchpadKeys();
+        if(!Connected() && (GetTickCount()-lastCheck) >= 2000)
+        {
+            registerMyScene(true);
+        }
 	}
 
 protected:
@@ -486,7 +496,7 @@ protected:
 	{
 		for(std::map<int, launchpadControl *>::iterator it=m_bindings.begin(); it!=m_bindings.end(); ++it)
 		{
-			it->second->Draw(this);
+			it->second->Draw(this, true);
 		}
 	}
 
@@ -498,10 +508,6 @@ private:
 		{
 			if(it->second->DetectGUIChanges())
 			{
-#ifdef DEBUG
-				info("change detected, param %i", it->first);
-#endif
-
 				it->second->ChangeFromGUI(this);
 			}
 		}
@@ -513,14 +519,12 @@ private:
         do
         {
             msg = comm->Read();
-                #ifdef DEBUG
-                if(msg.status != LaunchpadKeyStatus::keyNone ) info("MSG: %i scene=%i", msg.cmd, msg.currentScene);
-                #endif
             if(msg.status != LaunchpadKeyStatus::keyNone && (msg.currentScene == SceneAll || msg.currentScene == myScene))
             {
                 #ifdef DEBUG
-                info("2) MSG: %i scene=%i", msg.cmd, msg.currentScene);
+                info("MSG: %i scene=%i", msg.cmd, msg.currentScene);
                 #endif
+
                 int page = isAutoPageKey(&msg);
                 if(page >= 0 && msg.status == LaunchpadKeyStatus::keyDown && !msg.shiftDown)
                 {
@@ -528,6 +532,15 @@ private:
                 } else if(msg.cmd == LaunchpadCommand::RESET)
                 {
                     SetPage(currentPage);
+                } else if(msg.cmd == LaunchpadCommand::SETSCENE)
+                {
+                #ifdef DEBUG
+                info("MSG: set scene=%i myscene=%i", msg.param1, myScene);
+                #endif
+                    if(myScene == msg.param1)
+                    {
+                        redrawCache();
+                    }
                 } else
                 {
                     for(std::map<int, launchpadControl *>::iterator it=m_bindings.begin(); it!=m_bindings.end(); ++it)

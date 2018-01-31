@@ -139,12 +139,8 @@ void M581::step()
     }
 
     #ifdef LAUNCHPAD
-    if(drv->Connected())
-    {
-        connected = 1.0;
-        drv->ProcessLaunchpad();
-    } else
-        connected = 0.0;
+    connected = drv->Connected() ? 1.0 : 0.0;
+    drv->ProcessLaunchpad();
     #endif
 }
 
@@ -245,7 +241,7 @@ M581Widget::M581Widget()
         plight = createLight<TinyLight<RedLight>>(Vec(26, RACK_GRID_HEIGHT-162 - 11.28 * k), module, M581::LED_SUBDIV + k);
         addChild(plight);
         #ifdef LAUNCHPAD
-        ld1 = new LaunchpadLight(launchpadDriver::ALL_PAGES, ILaunchpadPro::RC2Key(k,8), LaunchpadLed::Off(), LaunchpadLed::Color(61));   // colonna PLAY
+        ld1 = new LaunchpadLight(launchpadDriver::ALL_PAGES, ILaunchpadPro::RC2Key(8,k), LaunchpadLed::Off(), LaunchpadLed::Color(61));   // colonna PLAY
         module->drv->Add(ld1, plight);
         #endif
      }

@@ -110,24 +110,18 @@ struct LaunchpadLight : launchpadControl
 		{
 			m_offColor = offColor;
 			m_onColor = onColor;
-			cached_value = -1020292929;
 		}
 
 	protected:
 		virtual void draw(launchpadDriver *drv) override {
 			float newValue = getValue();
-			if(newValue != cached_value)
-			{
-				drv->drive_led(m_key, newValue > 0.0 ? m_onColor : m_offColor);
-				cached_value = newValue;
-			}
+            drv->drive_led(m_key, newValue > 0.0 ? m_onColor : m_offColor);
 		}
 		virtual void onLaunchpadKey(LaunchpadMessage msg) override    {}
 
 	private:
 		LaunchpadLed m_offColor;
 		LaunchpadLed m_onColor;
-		float cached_value;
 };
 
 // Radiobutton switch, multiple keys, horizontal or vertical

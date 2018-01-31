@@ -1,23 +1,37 @@
 #include "rack.hpp"
 #include "common.hpp"
 
-#include <algorithm>
 #include "dsp/digital.hpp"
 
-struct KleeWidget : ModuleWidget
+
+#include <sstream>
+#include <iomanip>
+
+#include <algorithm>
+
+////////////////////
+// module widgets
+////////////////////
+
+
+struct RenatoWidget : ModuleWidget
 {
-private:
     enum MENUACTIONS
     {
-        RANDOMIZE_BUS,
         RANDOMIZE_PITCH,
-        RANDOMIZE_LOAD,
-        SET_RANGE_1V
+        RANDOMIZE_GATEX,
+        RANDOMIZE_GATEY,
+        RANDOMIZE_ACCESS
     };
 
-    struct KleeMenuItem : MenuItem
+public:
+   	RenatoWidget();
+    Menu *createContextMenu() override;
+    void onMenu(MENUACTIONS action);
+
+struct KleeMenuItem : MenuItem
     {
-        KleeMenuItem(const char *title, KleeWidget *pW, MENUACTIONS act)
+        KleeMenuItem(const char *title, RenatoWidget *pW, MENUACTIONS act)
         {
             text = title;
             widget = pW;
@@ -27,9 +41,11 @@ private:
         void onAction(EventAction &e) override {widget->onMenu(action);};
 
         private:
-            KleeWidget *widget;
+            RenatoWidget *widget;
             MENUACTIONS action;
     };
+private:
+    MENUACTIONS action;
 
     int getParamIndex(int index)
     {
@@ -50,11 +66,6 @@ private:
         }
     }
 
-    public:
-        KleeWidget();
-        Menu *createContextMenu() override;
-        void onMenu(MENUACTIONS action);
 };
-
 
 

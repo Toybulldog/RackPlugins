@@ -1,10 +1,19 @@
 #pragma once
+#include "rack.hpp"
+
 #define LVL_ON    (10.0)
 #define LVL_OFF   (0.0)
+
 
 using namespace rack;
 extern Plugin *plugin;
 
+#if ARCH_WIN
+#include "../digitalExt/launchpad.hpp"
+#include "../digitalExt/launchpadControls.hpp"
+#endif
+
+#define TEST_MODULE
 struct PJ301YPort : SVGPort {
 	PJ301YPort() {
 		background->svg = SVG::load(assetPlugin(plugin, "res/PJ301Y.svg"));
@@ -111,3 +120,27 @@ struct CKSS2 : CKSS
     }
 };
 
+#if ARCH_WIN
+struct DigitalLed : SVGWidget
+{
+	float *value;
+	std::vector<std::shared_ptr<SVG>> frames;
+
+	DigitalLed(int x, int y, float *pVal)
+	{
+	    frames.push_back(SVG::load(assetPlugin(plugin, "res/digitalLed_off.svg")));
+	    frames.push_back(SVG::load(assetPlugin(plugin, "res/digitalLed_on.svg")));
+		setSVG(frames[0]);
+		wrap();
+		box.pos = Vec(x, y);
+		value = pVal;
+	}
+
+	void draw(NVGcontext *vg) override
+	{
+	    int index = (*value > 0) ? 1 : 0;
+	    setSVG(frames[index]);
+		SVGWidget::draw(vg);
+	}
+};
+#endif

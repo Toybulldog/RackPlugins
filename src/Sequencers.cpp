@@ -2,6 +2,9 @@
 #include "M581.hpp"
 #include "Z8K.hpp"
 #include "Renato.hpp"
+#if defined(ARCH_WIN) && defined(TEST_MODULE)
+#include "lpTestModule.hpp"
+#endif // defined
 
 // The plugin-wide instance of the Plugin class
 Plugin *plugin;
@@ -22,6 +25,11 @@ void init(rack::Plugin *p)
     p->addModel(createModel<M581Widget>("TheXOR", "M581", "581 Sequencer", SEQUENCER_TAG));
 	p->addModel(createModel<Z8KWidget>("TheXOR", "Z8K", "Z8K Sequencer", SEQUENCER_TAG));
 	p->addModel(createModel<RenatoWidget>("TheXOR", "Renato", "Renato Sequencer", SEQUENCER_TAG));
+
+	#if defined(ARCH_WIN) && defined(TEST_MODULE)
+	p->addModel(createModel<LaunchpadTestWidget>("TheXOR", "LaunchpadTest", "Launchpad Test", DIGITAL_TAG));
+	#endif
+
 
 	// Any other plugin initialization may go here.
 	// As an alternative, consider lazy-loading assets and lookup tables when your module is created to reduce startup times of Rack.

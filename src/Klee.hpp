@@ -1,4 +1,3 @@
-#include "rack.hpp"
 #include "common.hpp"
 
 #include <algorithm>

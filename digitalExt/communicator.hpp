@@ -147,6 +147,7 @@ public:
 	communicator()
 	{
 		hMapFile = NULL;
+		syncMutex = NULL;
 		pmemory = NULL;
 		pCommonMemory = NULL;
 		rdBuffer = wrBuffer = NULL;
@@ -189,7 +190,11 @@ public:
 	{
 	    if(checkServer())
 		{
-			wrBuffer->WriteChunk(&msg);
+		    if(WaitForSingleObject(syncMutex, 500) == WAIT_OBJECT_0)
+            {
+                wrBuffer->WriteChunk(&msg);
+                ReleaseMutex(syncMutex);
+            }
 		}
 	}
 
@@ -209,6 +214,7 @@ private:
 	circBuffer *rdBuffer;
 	circBuffer *wrBuffer;
 	HANDLE hMapFile;
+	HANDLE syncMutex;
 
 	void init()
 	{
@@ -227,22 +233,26 @@ private:
 			info("file mapping opened");
 #endif
 			void *p = MapViewOfFile(hMapFile, FILE_MAP_READ | FILE_MAP_WRITE, 0, 0, 2 * b_l + sizeof(uint32_t)/*flag SERVER_POS*/);
-			if (p != NULL)
-			{
 #ifdef DEBUG
-				info("MapViewOfFile success");
+            info("MapViewOfFile success");
 #endif
-				wrBuffer = new circBuffer(b_l, p, START_OF_BUFFER);
-				rdBuffer = new circBuffer(b_l, p, START_OF_BUFFER + b_l);
+            syncMutex =  OpenMutex(MUTEX_ALL_ACCESS, FALSE, "launchpad_mtx");
 #ifdef DEBUG
-				info("circBuffer created");
+if(syncMutex != NULL) info("mutex OK"); else info("*** no mutexxxxxxx!!!!!! ****");
 #endif
-				pmemory = p;
-				pCommonMemory = (uint32_t *)p;
+
+
+            wrBuffer = new circBuffer(b_l, p, START_OF_BUFFER);
+            rdBuffer = new circBuffer(b_l, p, START_OF_BUFFER + b_l);
 #ifdef DEBUG
-				info("Opened OK");
+            info("circBuffer created");
 #endif
-			}
+
+            pmemory = p;
+            pCommonMemory = (uint32_t *)p;
+#ifdef DEBUG
+            info("Opened OK");
+#endif
 		}
 	}
 
@@ -288,6 +298,11 @@ private:
 			delete wrBuffer;
 			wrBuffer = NULL;
 		}
+		if(syncMutex != NULL)
+        {
+            CloseHandle(syncMutex);
+            syncMutex = NULL;
+        }
 	}
 };
 #endif

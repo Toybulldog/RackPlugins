@@ -513,8 +513,14 @@ private:
         do
         {
             msg = comm->Read();
+                #ifdef DEBUG
+                if(msg.status != LaunchpadKeyStatus::keyNone ) info("MSG: %i scene=%i", msg.cmd, msg.currentScene);
+                #endif
             if(msg.status != LaunchpadKeyStatus::keyNone && (msg.currentScene == SceneAll || msg.currentScene == myScene))
             {
+                #ifdef DEBUG
+                info("2) MSG: %i scene=%i", msg.cmd, msg.currentScene);
+                #endif
                 int page = isAutoPageKey(&msg);
                 if(page >= 0 && msg.status == LaunchpadKeyStatus::keyDown && !msg.shiftDown)
                 {
@@ -527,7 +533,12 @@ private:
                     for(std::map<int, launchpadControl *>::iterator it=m_bindings.begin(); it!=m_bindings.end(); ++it)
                     {
                          if(it->second->Intersect(GetPage(), msg.key, msg.shiftDown))
+                         {
+                            #ifdef DEBUG
+                            info("MSG: page=%i, key=%i shift=%i detected: %i", GetPage(), msg.key, msg.shiftDown, it->first);
+                            #endif
                             it->second->onLaunchpadKey(msg);
+                         }
                     }
                 }
             }

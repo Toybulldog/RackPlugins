@@ -87,7 +87,7 @@ enum LaunchpadCommand
 
 enum LaunchpadMode {Note = 0, Drum, Fader, Programmer};
 enum LaunchpadKeyStatus {keyUp, keyDown, keyPressure, keyNone};
-enum LaunchpadScene {SceneAll = -1, Scene1 = 0, Scene2, Scene3, Scene4, Scene5, Scene6, Scene7, Scene8};
+enum LaunchpadScene {SceneAll = 0, Scene1, Scene2, Scene3, Scene4, Scene5, Scene6, Scene7, Scene8};
 enum ButtonColorType
 {
 	Normal = 0,

@@ -1,5 +1,5 @@
 #pragma once
-#if ARCH_WIN
+#ifdef LAUNCHPAD
 #include <memory.h>
 #include <windows.h>
 #include "driver_include.hpp"

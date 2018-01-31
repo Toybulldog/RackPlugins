@@ -3,7 +3,7 @@
 #include <string.h>
 #include "dsp/digital.hpp"
 
-#if defined(ARCH_WIN) && defined(TEST_MODULE)
+#ifdef TEST_MODULE
 
 struct LaunchpadTest : Module
 {

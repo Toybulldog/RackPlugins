@@ -8,12 +8,17 @@
 using namespace rack;
 extern Plugin *plugin;
 
-#if ARCH_WIN
-#include "../digitalExt/launchpad.hpp"
-#include "../digitalExt/launchpadControls.hpp"
+#ifdef ARCH_WIN
+#define LAUNCHPAD
 #endif
 
+#ifdef LAUNCHPAD
+#include "../digitalExt/launchpad.hpp"
+#include "../digitalExt/launchpadControls.hpp"
+
 #define TEST_MODULE
+#endif
+
 struct PJ301YPort : SVGPort {
 	PJ301YPort() {
 		background->svg = SVG::load(assetPlugin(plugin, "res/PJ301Y.svg"));
@@ -120,7 +125,7 @@ struct CKSS2 : CKSS
     }
 };
 
-#if ARCH_WIN
+#ifdef LAUNCHPAD
 struct DigitalLed : SVGWidget
 {
 	float *value;

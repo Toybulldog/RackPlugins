@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#if defined(ARCH_WIN) && defined(TEST_MODULE)
+#ifdef TEST_MODULE
 ////////////////////
 // module widgets
 ////////////////////

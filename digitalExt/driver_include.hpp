@@ -1,5 +1,5 @@
 #pragma once
-#if ARCH_WIN
+#ifdef LAUNCHPAD
 #include "rack.hpp"
 #include <map>
 #include <list>

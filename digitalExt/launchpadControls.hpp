@@ -1,5 +1,5 @@
 #pragma once
-#if ARCH_WIN
+#ifdef LAUNCHPAD
 #include "communicator.hpp"
 #include "launchpad.hpp"
 

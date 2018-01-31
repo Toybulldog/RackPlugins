@@ -43,7 +43,7 @@ struct M581 : Module
 
     M581() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS)
     {
-        #if ARCH_WIN
+        #ifdef LAUNCHPAD
         drv = new LaunchpadBindingDriver(Scene2, 3);
         drv->SetAutoPageKey(LaunchpadKey::SESSION, 0);
         drv->SetAutoPageKey(LaunchpadKey::NOTE, 1);
@@ -54,9 +54,9 @@ struct M581 : Module
 
     ~M581()
     {
-        #if ARCH_WIN
+        #ifdef LAUNCHPAD
         delete drv;
-        #endif // ARCH_WIN
+        #endif
     }
 
     void step() override;
@@ -81,7 +81,7 @@ struct M581 : Module
 	    return NULL;
 	}
 
-	#if ARCH_WIN
+	#ifdef LAUNCHPAD
     LaunchpadBindingDriver *drv;
     float connected;
     #endif
@@ -104,7 +104,7 @@ private:
 
 void M581::on_loaded()
 {
-    #if ARCH_WIN
+    #ifdef LAUNCHPAD
     connected=0;
     #endif
     stepCounter.Set(&getter);
@@ -138,7 +138,7 @@ void M581::step()
         outputs[GATE].value = gateControl.Play(&Timer, stepCounter.PulseCounter());
     }
 
-    #if ARCH_WIN
+    #ifdef LAUNCHPAD
     connected = drv->Connected() ? 1.0 : 0.0;
     drv->ProcessLaunchpad();
     #endif
@@ -198,7 +198,7 @@ M581Widget::M581Widget()
          // step enable
         ParamWidget *pwdg = createParam<CKSSThree>(Vec(36 + 35 * k, RACK_GRID_HEIGHT-58), module, M581::STEP_ENABLE + k, 0.0, 2.0, 1.0);
         addParam(pwdg);
-        #if ARCH_WIN
+        #ifdef LAUNCHPAD
         LaunchpadRadio *radio = new LaunchpadRadio(0, ILaunchpadPro::RC2Key(5,k), 3, LaunchpadLed::Color(2), LaunchpadLed::Color(3));
         module->drv->Add(radio, pwdg);
         #endif
@@ -206,7 +206,7 @@ M581Widget::M581Widget()
         // Gate switches
         pwdg = createParam<GateSwitch>(Vec(39 + 35 * k, RACK_GRID_HEIGHT-140), module, M581::GATE_SWITCH + k, 0.0, 3.0, 2.0);
         addParam(pwdg);
-        #if ARCH_WIN
+        #ifdef LAUNCHPAD
         radio = new LaunchpadRadio(0, ILaunchpadPro::RC2Key(1,k), 4, LaunchpadLed::Color(6), LaunchpadLed::Color(8));
         module->drv->Add(radio, pwdg);
         #endif
@@ -215,16 +215,16 @@ M581Widget::M581Widget()
         // step notes
         pwdg = createParam<BefacoSlidePot>(Vec(35 + 35 * k, RACK_GRID_HEIGHT-368), module, M581::STEP_NOTES + k, 0.001, 1.0, 0.5);
         addParam(pwdg);
-        #if ARCH_WIN
+        #ifdef LAUNCHPAD
         LaunchpadKnob *pknob = new LaunchpadKnob(1, ILaunchpadPro::RC2Key(6,k), LaunchpadLed::Rgb(20,10,10), LaunchpadLed::Rgb(60,40,40));
         module->drv->Add(pknob, pwdg);
-        #endif // ARCH_WIN
+        #endif
 
         //page #2 (Device): Counters
         // Counter switches
         pwdg = createParam<CounterSwitch>(Vec(39 + 35 * k, RACK_GRID_HEIGHT-246), module, M581::COUNTER_SWITCH + k, 0.0, 7.0, 0.0);
         addParam(pwdg);
-        #if ARCH_WIN
+        #ifdef LAUNCHPAD
         radio = new LaunchpadRadio(2, ILaunchpadPro::RC2Key(0,k), 8, LaunchpadLed::Color(6), LaunchpadLed::Color(8));
         module->drv->Add(radio, pwdg);
         #endif
@@ -232,15 +232,15 @@ M581Widget::M581Widget()
         // step leds (all pages)
         ModuleLightWidget *plight = createLight<LargeLight<RedLight>>(Vec(36 + 35 * k, RACK_GRID_HEIGHT-80), module, M581::LED_STEP + k);
         addChild(plight);
-        #if ARCH_WIN
+        #ifdef LAUNCHPAD
         LaunchpadLight *ld1 = new LaunchpadLight(launchpadDriver::ALL_PAGES, ILaunchpadPro::RC2Key(0,k), LaunchpadLed::Off(), LaunchpadLed::Color(63));
         module->drv->Add(ld1, plight);
-        #endif // ARCH_WIN
+        #endif
 
         // subdiv leds (all pages)
         plight = createLight<TinyLight<RedLight>>(Vec(26, RACK_GRID_HEIGHT-162 - 11.28 * k), module, M581::LED_SUBDIV + k);
         addChild(plight);
-        #if ARCH_WIN
+        #ifdef LAUNCHPAD
         ld1 = new LaunchpadLight(launchpadDriver::ALL_PAGES, ILaunchpadPro::RC2Key(k,8), LaunchpadLed::Off(), LaunchpadLed::Color(61));   // colonna PLAY
         module->drv->Add(ld1, plight);
         #endif
@@ -281,9 +281,9 @@ M581Widget::M581Widget()
     addChild(display);
     addParam(createParam<BefacoSnappedTinyKnob>(Vec(312, RACK_GRID_HEIGHT-66), module, M581::RUN_MODE,0.0, 4.0, 0.0));
 
-    #if ARCH_WIN
+    #ifdef LAUNCHPAD
     addChild(new DigitalLed(360, 20, &module->connected));
-    #endif // ARCH_WIN
+    #endif
 }
 
 Menu *M581Widget::createContextMenu()

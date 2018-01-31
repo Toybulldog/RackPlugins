@@ -1,5 +1,5 @@
 #pragma once
-#if ARCH_WIN
+#ifdef LAUNCHPAD
 #include "communicator.hpp"
 
 // The interface for driving the Novation Launchpad Pro

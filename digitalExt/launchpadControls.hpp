@@ -26,6 +26,37 @@ struct LaunchpadSwitch : launchpadControl
 		LaunchpadLed m_onColor;
 };
 
+// 3-state  switch, single key
+struct LaunchpadThree : launchpadControl
+{
+	public:
+		LaunchpadThree(int page, LaunchpadKey key, LaunchpadLed offColor, LaunchpadLed onColor1, LaunchpadLed onColor2, bool shifted = false)
+            : LaunchpadThree(0, page, key, offColor, onColor1, onColor2, shifted) {}
+
+		LaunchpadThree(int lp, int page, LaunchpadKey key, LaunchpadLed offColor, LaunchpadLed onColor1, LaunchpadLed onColor2, bool shifted = false) : launchpadControl(lp, page, key, shifted)
+		{
+			m_colors[0] = offColor;
+			m_colors[1] = onColor1;
+			m_colors[2] = onColor2;
+		}
+
+	protected:
+		virtual void draw(launchpadDriver *drv) override
+		{
+		    int n = (int)roundf(getValue());
+		    if(n > 2)
+                n =2;
+            else if(n < 0)
+                n=0;
+		    drv->drive_led(m_lpNumber, m_key, m_colors[n]);
+        }
+		virtual bool intersect(LaunchpadKey key) override   {return key == m_key;}
+		virtual void onLaunchpadKey(LaunchpadMessage msg) override  {if(msg.status == LaunchpadKeyStatus::keyDown) setValue(getValue() < 1);}
+
+	private:
+		LaunchpadLed m_colors[3];
+};
+
 struct LaunchpadMomentary : launchpadControl
 {
 	public:
@@ -89,6 +120,7 @@ struct LaunchpadKnob : launchpadControl
 		{
 			switch(msg.status)
 			{
+            case LaunchpadKeyStatus::keyChannelPressure:
 			case LaunchpadKeyStatus::keyPressure:
 				float delta = sensitivity * (pBindedParam->maxValue - pBindedParam->minValue);
 				if(msg.param0 < 100)

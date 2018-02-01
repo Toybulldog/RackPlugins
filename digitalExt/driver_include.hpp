@@ -10,7 +10,7 @@
  R8C8 [R16C16] is LOWER RIGHT
  */
 
- #define ALL_LAUNCHPADS     (127)
+#define ALL_LAUNCHPADS     (127)
 
 enum LaunchpadKey
 {
@@ -88,7 +88,7 @@ enum LaunchpadCommand
 };
 
 enum LaunchpadMode {Note = 0, Drum, Fader, Programmer};
-enum LaunchpadKeyStatus {keyUp, keyDown, keyPressure, keyNone};
+enum LaunchpadKeyStatus {keyUp, keyDown, keyPressure, keyChannelPressure, keyNone};
 enum LaunchpadScene {SceneAll = 0, Scene1, Scene2, Scene3, Scene4, Scene5, Scene6, Scene7, Scene8};
 enum ButtonColorType
 {

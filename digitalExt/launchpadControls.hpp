@@ -51,7 +51,16 @@ struct LaunchpadThree : launchpadControl
 		    drv->drive_led(m_lpNumber, m_key, m_colors[n]);
         }
 		virtual bool intersect(LaunchpadKey key) override   {return key == m_key;}
-		virtual void onLaunchpadKey(LaunchpadMessage msg) override  {if(msg.status == LaunchpadKeyStatus::keyDown) setValue(getValue() < 1);}
+		virtual void onLaunchpadKey(LaunchpadMessage msg) override
+		{
+		    if(msg.status == LaunchpadKeyStatus::keyDown)
+            {
+                int n = (int)roundf(getValue())+1;
+                if(n > 2)
+                    n = 0;
+                setValue(n);
+            }
+		}
 
 	private:
 		LaunchpadLed m_colors[3];
@@ -72,8 +81,14 @@ struct LaunchpadMomentary : launchpadControl
 
 	protected:
 		virtual void draw(launchpadDriver *drv) override    {drv->drive_led(m_lpNumber, m_key, getValue() > 0.0 ? m_onColor : m_offColor); }
-		virtual bool intersect(LaunchpadKey key) override   {return key == m_key;}
-		virtual void onLaunchpadKey(LaunchpadMessage msg) override  {setValue(msg.status == LaunchpadKeyStatus::keyDown ? 1.0 : 0.0);}
+		virtual bool intersect(LaunchpadKey key) override
+		{
+		    return key == m_key;
+        }
+		virtual void onLaunchpadKey(LaunchpadMessage msg) override
+		{
+		    setValue(msg.status == LaunchpadKeyStatus::keyDown ? 1.0 : 0.0);
+        }
 
 	private:
 		LaunchpadLed m_offColor;

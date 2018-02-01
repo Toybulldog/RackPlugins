@@ -88,7 +88,7 @@ LaunchpadTestWidget::LaunchpadTestWidget()
     module->drv->Add(radio, pEna);
 addParam(pEna);
 
-    LaunchpadMomentary *mome = new LaunchpadMomentary(0, ILaunchpadPro::RC2Key(1,7), LaunchpadLed::Color(2), LaunchpadLed::Color(3));
+    LaunchpadMomentary *mome = new LaunchpadMomentary(0, LaunchpadKey::RECORD, LaunchpadLed::Color(2), LaunchpadLed::Color(3));
     pEna = createParam<BefacoPush>(Vec(96, 20), module, LaunchpadTest::BTN4, 0.0, 1.0, 0.0);
     module->drv->Add(mome, pEna);
 addParam(pEna);

@@ -154,6 +154,7 @@ public:
 		myScene = scene;
 		Reset(ALL_LAUNCHPADS);
         lastCheck = 0;
+        currentPage=0;
 		registerMyScene(true);
 	}
 
@@ -209,39 +210,25 @@ public:
 		if(page >= 0 && page < numPages && currentPage != page)
 		{
 			currentPage = page;
-			ClearPage(ALL_LAUNCHPADS, page);
-			drive_autopage();
+			Clear(ALL_LAUNCHPADS);
 			redrawCache();
 		}
 	}
 
-	void ClearAllPages(int lp)
-	{
-		for(int k = 0; k <= numPages; k++)
-			ClearPage(lp, k);
-	}
 
-	void ClearPage(int lp, int page)
+	void Clear(int lp)
 	{
-		if(page >= 0 && page < numPages)
-		{
-			LaunchpadLed off;
-			off.status = ButtonColorType::Normal;
-			off.r_color = 0;
-
-			for(int k = RECORD_ARM; k <= USER; k++)
-			{
-				LaunchpadKey key = (LaunchpadKey)k;
-				if(ILaunchpadPro::IsValidkey(key))
-					setValue(lp, page, key, off);
-			}
-		}
+		LaunchpadMessage dest;
+		ILaunchpadPro::LightAll(&dest, 0);
+		dest.currentScene = myScene;
+		dest.lpNumber = lp;
+		comm->Write(dest);
 	}
 
 	void Reset(int lp)
 	{
 		SetPage(0);
-		ClearAllPages(lp);
+		Clear(lp);
 		comm->clear();
 	}
 
@@ -272,7 +259,7 @@ protected:
 	int currentPage;
 	LaunchpadScene myScene;
 	communicator *comm;
-	virtual void redrawCache() = 0;
+	virtual void redrawCache() {drive_autopage();};
 	void setValue(int lp, int page, LaunchpadKey key, LaunchpadLed led)
 	{
 		if(page == currentPage || page == launchpadDriver::ALL_PAGES)
@@ -296,13 +283,16 @@ protected:
 		ILaunchpadPro::RegisterScene(&dest, myScene, registr);
 		dest.lpNumber = ALL_LAUNCHPADS;
 		if(comm->Open())
-			comm->Write(dest);
+        {
+            comm->Write(dest);
+            if(registr)
+                SetPage(0);
+        }
 
     }
     uint32_t lastCheck;
 
 private:
-
 	void drive_autopage()
 	{
 		LaunchpadLed dim, on;
@@ -313,7 +303,11 @@ private:
 		for(std::map<LaunchpadKey, int>::iterator it=autoPages.begin(); it!=autoPages.end(); ++it)
 		{
 			for(int k = 0; k < numPages; k++)
-				setValue(ALL_LAUNCHPADS, k, it->first, it->second == currentPage ? on : dim);
+            {
+                LaunchpadMessage dest;
+                ILaunchpadPro::Led(&dest, it->first, it->second == currentPage ? on : dim);
+                comm->Write(dest);
+            }
 		}
 	}
 
@@ -335,7 +329,18 @@ public:
         m_lastDrawnValue = getValue();
 
 	}
-	bool Intersect(int lp, int page, LaunchpadKey key, bool shift)    {return m_shifted != shift || page != m_page || (lp != m_lpNumber && lp != ALL_LAUNCHPADS) ? false : intersect(key);}
+	bool Intersect(int lp, int page, LaunchpadKey key, bool shift)
+	{
+	    if(m_shifted == shift)
+        {
+            if(page == m_page || page == launchpadDriver::ALL_PAGES || m_page == launchpadDriver::ALL_PAGES)
+            {
+                 if(lp == m_lpNumber || lp == ALL_LAUNCHPADS || m_lpNumber == ALL_LAUNCHPADS)
+                    return intersect(key);
+            }
+        }
+	    return false;
+    }
 
 	void ChangeFromGUI(launchpadDriver *drv)  // gui updated: the new value is already in the binded parameter
 	{
@@ -417,7 +422,7 @@ public:
 		int id = ctrl->ID();
 		m_bindings[id] = ctrl;
 #ifdef DEBUG
-				info("binded param %i",id);
+				info("binded param %i ",id);
 #endif
 
 	}
@@ -427,6 +432,9 @@ public:
 		ctrl->bindWidget(p);
 		int id = ctrl->ID();
 		m_bindings[0x8000 | id] = ctrl;
+#ifdef DEBUG
+				info("binded light %i ",0x8000 |id);
+#endif
 	}
 
 	void ProcessLaunchpad()
@@ -446,6 +454,7 @@ protected:
 		{
 			it->second->Draw(this, true);
 		}
+		launchpadDriver::redrawCache();
 	}
 
 private:
@@ -469,11 +478,10 @@ private:
             msg = comm->Read();
             if(msg.status != LaunchpadKeyStatus::keyNone && (msg.currentScene == SceneAll || msg.currentScene == myScene))
             {
-                #ifdef DEBUG
-                info("MSG: %i scene=%i", msg.cmd, msg.currentScene);
-                #endif
-
                 int page = isAutoPageKey(&msg);
+                #ifdef DEBUG
+                info("MSG: from LP=%i %i scene=%i ispage=%i key=%i", msg.lpNumber, msg.cmd, msg.currentScene, page, msg.key);
+                #endif
                 if(page >= 0 && msg.status == LaunchpadKeyStatus::keyDown && !msg.shiftDown)
                 {
                     SetPage(page);
@@ -493,7 +501,7 @@ private:
                 {
                     for(std::map<int, launchpadControl *>::iterator it=m_bindings.begin(); it!=m_bindings.end(); ++it)
                     {
-                         if(it->second->Intersect(msg.lpNumber, GetPage(), msg.key, msg.shiftDown))
+                        if(it->second->Intersect(msg.lpNumber, GetPage(), msg.key, msg.shiftDown))
                          {
                             #ifdef DEBUG
                             info("MSG: lp#=%i page=%i, key=%i shift=%i detected: %i", msg.lpNumber, GetPage(), msg.key, msg.shiftDown, it->first);

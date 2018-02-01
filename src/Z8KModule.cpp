@@ -2,6 +2,8 @@
 #include "z8kSequencer.hpp"
 #include <sstream>
 
+#undef LAUNCHPAD // non usato
+
 struct Z8K : Module
 {
     enum ParamIds

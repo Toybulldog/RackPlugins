@@ -10,6 +10,8 @@
  R8C8 [R16C16] is LOWER RIGHT
  */
 
+ #define ALL_LAUNCHPADS     (127)
+
 enum LaunchpadKey
 {
     _NOTAKEY = 0,
@@ -104,6 +106,7 @@ struct LaunchpadMessage
     LaunchpadCommand cmd;
     LaunchpadKey key;
     LaunchpadScene currentScene;
+    short lpNumber;
     bool shiftDown;
 	short param0;
 	short param1;

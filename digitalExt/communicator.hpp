@@ -11,6 +11,7 @@ struct __attribute__((aligned(1),packed)) _launchpadMessage
 	uint8_t cmd;
 	uint8_t key;
 	uint8_t currentScene;
+	uint8_t lpNumber;
 	uint8_t shiftDown;
 	short param0;
 	short param1;
@@ -21,6 +22,7 @@ struct __attribute__((aligned(1),packed)) _launchpadMessage
 		cmd = (uint8_t)src->cmd;
 		key = (uint8_t)src->key;
 		currentScene = (uint8_t)src->currentScene;
+		lpNumber = (uint8_t)src->lpNumber;
 		shiftDown = (uint8_t)(src->shiftDown ? 1 : 0);
 		param0 = src->param0;
 		param1 = src->param1;
@@ -33,6 +35,7 @@ struct __attribute__((aligned(1),packed)) _launchpadMessage
 		rv.cmd = (LaunchpadCommand)cmd;
 		rv.key = (LaunchpadKey)key;
 		rv.currentScene = (LaunchpadScene)currentScene;
+		rv.lpNumber = lpNumber;
 		rv.shiftDown = shiftDown != 0;
 		rv.param0 = param0;
 		rv.param1 = param1;

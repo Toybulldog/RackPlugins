@@ -17,7 +17,7 @@ struct LaunchpadSwitch : launchpadControl
 		}
 
 	protected:
-		virtual void draw(launchpadDriver *drv) override    {drv->drive_led(m_key, getValue() > 0.0 ? m_onColor : m_offColor);  }
+		virtual void draw(launchpadDriver *drv) override    {drv->drive_led(m_lpNumber, m_key, getValue() > 0.0 ? m_onColor : m_offColor);  }
 		virtual bool intersect(LaunchpadKey key) override   {return key == m_key;}
 		virtual void onLaunchpadKey(LaunchpadMessage msg) override  {if(msg.status == LaunchpadKeyStatus::keyDown) setValue(getValue() < 1);}
 
@@ -40,7 +40,7 @@ struct LaunchpadMomentary : launchpadControl
 		}
 
 	protected:
-		virtual void draw(launchpadDriver *drv) override    {drv->drive_led(m_key, getValue() > 0.0 ? m_onColor : m_offColor); }
+		virtual void draw(launchpadDriver *drv) override    {drv->drive_led(m_lpNumber, m_key, getValue() > 0.0 ? m_onColor : m_offColor); }
 		virtual bool intersect(LaunchpadKey key) override   {return key == m_key;}
 		virtual void onLaunchpadKey(LaunchpadMessage msg) override  {setValue(msg.status == LaunchpadKeyStatus::keyDown ? 1.0 : 0.0);}
 
@@ -77,12 +77,12 @@ struct LaunchpadKnob : launchpadControl
 			led.r_color = (int)roundf(rescalef(v, pBindedParam->minValue, pBindedParam->maxValue, m_offColor.r_color, m_onColor.r_color));
 			led.g = (int)roundf(rescalef(v, pBindedParam->minValue, pBindedParam->maxValue, m_offColor.g, m_onColor.g));
 			led.b = (int)roundf(rescalef(v, pBindedParam->minValue, pBindedParam->maxValue, m_offColor.b, m_onColor.b));
-			drv->drive_led(m_key, led);
+			drv->drive_led(m_lpNumber, m_key, led);
 
 			led.r_color = (int)roundf(rescalef(inv_v, pBindedParam->minValue, pBindedParam->maxValue, m_offColor.r_color, m_onColor.r_color));
 			led.g = (int)roundf(rescalef(inv_v, pBindedParam->minValue, pBindedParam->maxValue, m_offColor.g, m_onColor.g));
 			led.b = (int)roundf(rescalef(inv_v, pBindedParam->minValue, pBindedParam->maxValue, m_offColor.b, m_onColor.b));
-			drv->drive_led(m_secondKey, led);
+			drv->drive_led(m_lpNumber, m_secondKey, led);
 		}
 		virtual bool intersect(LaunchpadKey key) override {return key == m_key || key == m_secondKey; }
 		virtual void onLaunchpadKey(LaunchpadMessage msg) override
@@ -127,7 +127,7 @@ struct LaunchpadLight : launchpadControl
 	protected:
 		virtual void draw(launchpadDriver *drv) override {
 			float newValue = getValue();
-            drv->drive_led(m_key, newValue > 0.0 ? m_onColor : m_offColor);
+            drv->drive_led(m_lpNumber, m_key, newValue > 0.0 ? m_onColor : m_offColor);
 		}
 		virtual void onLaunchpadKey(LaunchpadMessage msg) override    {}
 
@@ -190,11 +190,11 @@ struct LaunchpadRadio : launchpadControl
 				{
 					if(m_horizontal)
 					{
-						drv->drive_led(ILaunchpadPro::RC2Key(r, c), k == n ? m_selectedColor : m_unselectedColor);
+						drv->drive_led(m_lpNumber, ILaunchpadPro::RC2Key(r, c), k == n ? m_selectedColor : m_unselectedColor);
 						c++;
 					} else
 					{
-						drv->drive_led(ILaunchpadPro::RC2Key(r, c), m_numKeys-1-k == n ? m_selectedColor : m_unselectedColor);
+						drv->drive_led(m_lpNumber, ILaunchpadPro::RC2Key(r, c), m_numKeys-1-k == n ? m_selectedColor : m_unselectedColor);
 						r++;
 					}
 				}

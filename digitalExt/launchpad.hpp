@@ -152,7 +152,7 @@ public:
 		comm = new communicator();
 		numPages = maxPage;
 		myScene = scene;
-		Reset();
+		Reset(ALL_LAUNCHPADS);
         lastCheck = 0;
 		registerMyScene(true);
 	}
@@ -165,41 +165,41 @@ public:
 
 	bool Connected()    {return comm->Connected();}
 
-	void LedRGB(int page, int r, int c, int c_r, int c_g, int c_b)      {return LedRGB(page, ILaunchpadPro::RC2Key(r, c), c_r, c_g, c_b); }
-	void LedPulse(int page, int r, int c, int color)                    {return LedPulse(page, ILaunchpadPro::RC2Key(r, c), color); }
-	void LedColor(int page, int r, int c, int color)                    {return LedColor(page, ILaunchpadPro::RC2Key(r, c), color); }
-	void LedFlash(int page, int r, int c, int color)                    {return LedFlash(page, ILaunchpadPro::RC2Key(r, c), color); }
-	void Led(int page, int r, int c, LaunchpadLed led)                  {return Led(page, ILaunchpadPro::RC2Key(r, c), led); }
-	void Led(int page, LaunchpadKey key, LaunchpadLed led)              {setValue(page, key, led);}
-	void LedColor(int page, LaunchpadKey key, int colr)
+	void LedRGB(int lp, int page,int r, int c, int c_r, int c_g, int c_b)      {return LedRGB(lp, page, ILaunchpadPro::RC2Key(r, c), c_r, c_g, c_b); }
+	void LedPulse(int lp, int page,int r, int c, int color)                    {return LedPulse(lp, page, ILaunchpadPro::RC2Key(r, c), color); }
+	void LedColor(int lp, int page,int r, int c, int color)                    {return LedColor(lp, page, ILaunchpadPro::RC2Key(r, c), color); }
+	void LedFlash(int lp, int page,int r, int c, int color)                    {return LedFlash(lp, page, ILaunchpadPro::RC2Key(r, c), color); }
+	void Led(int lp, int page,int r, int c, LaunchpadLed led)                  {return Led(lp, page, ILaunchpadPro::RC2Key(r, c), led); }
+	void Led(int lp, int page,LaunchpadKey key, LaunchpadLed led)              {setValue(lp, page, key, led);}
+	void LedColor(int lp, int page,LaunchpadKey key, int colr)
 	{
 		LaunchpadLed led;
 		led.status = ButtonColorType::Normal;
 		led.r_color = colr;
-		Led(page, key, led);
+		Led(lp, page, key, led);
 	}
-	void LedFlash(int page, LaunchpadKey key, int colr)
+	void LedFlash(int lp, int page,LaunchpadKey key, int colr)
 	{
 		LaunchpadLed led;
 		led.status = ButtonColorType::Flash;
 		led.r_color = colr;
-		Led(page, key, led);
+		Led(lp, page, key, led);
 	}
-	void LedPulse(int page, LaunchpadKey key, int colr)
+	void LedPulse(int lp, int page,LaunchpadKey key, int colr)
 	{
 		LaunchpadLed led;
 		led.status = ButtonColorType::Pulse;
 		led.r_color = colr;
-		Led(page, key, led);
+		Led(lp, page, key, led);
 	}
-	void LedRGB(int page, LaunchpadKey key, int c_r, int c_g, int c_b)
+	void LedRGB(int lp, int page,LaunchpadKey key, int c_r, int c_g, int c_b)
 	{
 		LaunchpadLed led;
 		led.status = ButtonColorType::RGB;
 		led.r_color = c_r;
 		led.g = c_g;
 		led.b = c_b;
-		Led(page, key, led);
+		Led(lp, page, key, led);
 	}
 
 	int GetPage() {return currentPage;}
@@ -209,19 +209,19 @@ public:
 		if(page >= 0 && page < numPages && currentPage != page)
 		{
 			currentPage = page;
-			ClearPage(page);
+			ClearPage(ALL_LAUNCHPADS, page);
 			drive_autopage();
 			redrawCache();
 		}
 	}
 
-	void ClearAllPages()
+	void ClearAllPages(int lp)
 	{
 		for(int k = 0; k <= numPages; k++)
-			ClearPage(k);
+			ClearPage(lp, k);
 	}
 
-	void ClearPage(int page)
+	void ClearPage(int lp, int page)
 	{
 		if(page >= 0 && page < numPages)
 		{
@@ -233,15 +233,15 @@ public:
 			{
 				LaunchpadKey key = (LaunchpadKey)k;
 				if(ILaunchpadPro::IsValidkey(key))
-					setValue(page, key, off);
+					setValue(lp, page, key, off);
 			}
 		}
 	}
 
-	void Reset()
+	void Reset(int lp)
 	{
 		SetPage(0);
-		ClearAllPages();
+		ClearAllPages(lp);
 		comm->clear();
 	}
 
@@ -258,11 +258,12 @@ public:
 		}
 	}
 
-	void drive_led(LaunchpadKey key, LaunchpadLed led)
+	void drive_led(int lp, LaunchpadKey key, LaunchpadLed led)
 	{
 		LaunchpadMessage dest;
 		ILaunchpadPro::Led(&dest, key, led);
 		dest.currentScene = myScene;
+		dest.lpNumber = lp;
 		comm->Write(dest);
 	}
 
@@ -272,12 +273,10 @@ protected:
 	LaunchpadScene myScene;
 	communicator *comm;
 	virtual void redrawCache() = 0;
-	virtual void setCache(int page, LaunchpadKey key, LaunchpadLed led) {}
-	void setValue(int page, LaunchpadKey key, LaunchpadLed led)
+	void setValue(int lp, int page, LaunchpadKey key, LaunchpadLed led)
 	{
-		setCache(page, key,led);
 		if(page == currentPage || page == launchpadDriver::ALL_PAGES)
-			drive_led(key, led);
+			drive_led(lp, key, led);
 	}
 	int isAutoPageKey(LaunchpadMessage *msg)
 	{
@@ -295,6 +294,7 @@ protected:
         lastCheck = GetTickCount();
 		LaunchpadMessage dest;
 		ILaunchpadPro::RegisterScene(&dest, myScene, registr);
+		dest.lpNumber = ALL_LAUNCHPADS;
 		if(comm->Open())
 			comm->Write(dest);
 
@@ -313,14 +313,13 @@ private:
 		for(std::map<LaunchpadKey, int>::iterator it=autoPages.begin(); it!=autoPages.end(); ++it)
 		{
 			for(int k = 0; k < numPages; k++)
-				setValue(k, it->first, it->second == currentPage ? on : dim);
+				setValue(ALL_LAUNCHPADS, k, it->first, it->second == currentPage ? on : dim);
 		}
 	}
 
 private:
 	std::map<LaunchpadKey, int> autoPages;
 };
-
 
 struct launchpadControl
 {
@@ -336,7 +335,7 @@ public:
         m_lastDrawnValue = getValue();
 
 	}
-	bool Intersect(int page, LaunchpadKey key, bool shift)    {return m_shifted != shift || page != m_page ? false : intersect(key);}
+	bool Intersect(int lp, int page, LaunchpadKey key, bool shift)    {return m_shifted != shift || page != m_page || (lp != m_lpNumber && lp != ALL_LAUNCHPADS) ? false : intersect(key);}
 
 	void ChangeFromGUI(launchpadDriver *drv)  // gui updated: the new value is already in the binded parameter
 	{
@@ -494,10 +493,10 @@ private:
                 {
                     for(std::map<int, launchpadControl *>::iterator it=m_bindings.begin(); it!=m_bindings.end(); ++it)
                     {
-                         if(it->second->Intersect(GetPage(), msg.key, msg.shiftDown))
+                         if(it->second->Intersect(msg.lpNumber, GetPage(), msg.key, msg.shiftDown))
                          {
                             #ifdef DEBUG
-                            info("MSG: page=%i, key=%i shift=%i detected: %i", GetPage(), msg.key, msg.shiftDown, it->first);
+                            info("MSG: lp#=%i page=%i, key=%i shift=%i detected: %i", msg.lpNumber, GetPage(), msg.key, msg.shiftDown, it->first);
                             #endif
                             it->second->onLaunchpadKey(msg);
                          }
@@ -508,5 +507,4 @@ private:
 	}
 
 };
-
 #endif

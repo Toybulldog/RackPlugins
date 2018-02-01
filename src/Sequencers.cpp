@@ -2,6 +2,8 @@
 #include "M581.hpp"
 #include "Z8K.hpp"
 #include "Renato.hpp"
+#include "Spiralone.hpp"
+
 #ifdef TEST_MODULE
 #include "lpTestModule.hpp"
 #endif // defined
@@ -25,6 +27,7 @@ void init(rack::Plugin *p)
     p->addModel(createModel<M581Widget>("TheXOR", "M581", "581 Sequencer", SEQUENCER_TAG));
 	p->addModel(createModel<Z8KWidget>("TheXOR", "Z8K", "Z8K Sequencer", SEQUENCER_TAG));
 	p->addModel(createModel<RenatoWidget>("TheXOR", "Renato", "Renato Sequencer", SEQUENCER_TAG));
+	p->addModel(createModel<SpiraloneWidget>("TheXOR", "Spiralone", "Spiralone Sequencer", SEQUENCER_TAG));
 
 	#ifdef TEST_MODULE
 	p->addModel(createModel<LaunchpadTestWidget>("TheXOR", "LaunchpadTest", "Launchpad Test", DIGITAL_TAG));

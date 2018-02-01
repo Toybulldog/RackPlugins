@@ -59,11 +59,24 @@ struct Z8K : Module
 
     Z8K() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS)
     {
+        #ifdef LAUNCHPAD
+        drv = new LaunchpadBindingDriver(Scene4, 3);
+        drv->SetAutoPageKey(LaunchpadKey::SESSION, 0);
+        drv->SetAutoPageKey(LaunchpadKey::NOTE, 1);
+        drv->SetAutoPageKey(LaunchpadKey::DEVICE, 2);
+        #endif
         on_loaded();
     }
 
+    #ifdef LAUNCHPAD
+    ~Z8K()
+    {
+        delete drv;
+    }
+    #endif
+
     void step() override;
-    void reset() override {on_loaded();}
+    void reset() override {load();}
 
     void fromJson(json_t *root) override {Module::fromJson(root); on_loaded();}
     json_t *toJson() override
@@ -72,12 +85,26 @@ struct Z8K : Module
 		return rootJ;
 	}
 
+	#ifdef LAUNCHPAD
+    LaunchpadBindingDriver *drv;
+    float connected;
+    #endif
+
 private:
     void on_loaded();
+    void load();
 	z8kSequencer seq[10];
 };
 
 void Z8K::on_loaded()
+{
+    #ifdef LAUNCHPAD
+    connected=0;
+    #endif
+    load();
+}
+
+void Z8K::load()
 {
 	// sequencer 1-4
 	for(int k = 0; k < 4; k++)
@@ -104,6 +131,11 @@ void Z8K::step()
 {
 	for(int k = 0; k < NUM_SEQUENCERS; k++)
 		seq[k].Step();
+
+    #ifdef LAUNCHPAD
+    connected = drv->Connected() ? 1.0 : 0.0;
+    drv->ProcessLaunchpad();
+    #endif
 }
 
 Z8KWidget::Z8KWidget()
@@ -171,4 +203,8 @@ Z8KWidget::Z8KWidget()
 		addInput(createInput<PJ301RPort>(Vec(px+2*dist_h, y), module, Z8K::CLOCK_VERT+k));
 		addOutput(createOutput<PJ301GPort>(Vec(px+3*dist_h, y -dist_v), module, Z8K::CV_VERT+k));
 	}
+
+    #ifdef LAUNCHPAD
+    addChild(new DigitalLed((box.size.x-24)/2, 5, &module->connected));
+    #endif
 }

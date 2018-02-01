@@ -43,10 +43,10 @@ public:
 	{
 		switch(led.status)
 		{
-		case ButtonColorType::Normal: ILaunchpadPro::LedColor(dest, key, led.r_color); break;
-		case ButtonColorType::RGB: ILaunchpadPro::LedRGB(dest, key, led.r_color, led.g, led.b); break;
-		case ButtonColorType::Flash: ILaunchpadPro::LedFlash(dest, key, led.r_color); break;
-		case ButtonColorType::Pulse: ILaunchpadPro::LedPulse(dest, key, led.r_color); break;
+		case ButtonColorType::Normal: LedColor(dest, key, led.r_color); break;
+		case ButtonColorType::RGB: LedRGB(dest, key, led.r_color, led.g, led.b); break;
+		case ButtonColorType::Flash: LedFlash(dest, key, led.r_color); break;
+		case ButtonColorType::Pulse: LedPulse(dest, key, led.r_color); break;
 		}
 		return dest;
 	}
@@ -322,59 +322,6 @@ private:
 };
 
 
-// cache management: launchpad surface
-class LaunchpadPagingDriver : public launchpadDriver
-{
-public:
-	LaunchpadPagingDriver(LaunchpadScene scene, int maxPage) : launchpadDriver(scene, maxPage)
-	{
-		pageCache = new LaunchpadLed*[numPages];
-		for(int k = 0; k < numPages; k++)
-			pageCache[k] = new LaunchpadLed[99];
-	}
-
-	virtual ~LaunchpadPagingDriver()
-	{
-		 if(pageCache != NULL)
-		 {
-			for(int k = 0; k < numPages; k++)
-			{
-				if(pageCache[k] != NULL)
-				{
-					delete [] pageCache[k];
-					pageCache[k] = NULL;
-				}
-			}
-			delete [] pageCache;
-			pageCache = NULL;
-		 }
-	}
-
-protected:
-	virtual void redrawCache() override
-	{
-		for(int k = RECORD_ARM; k <= USER; k++)
-		{
-			LaunchpadKey key = (LaunchpadKey)k;
-			if(ILaunchpadPro::IsValidkey(key))
-				drive_led(key, pageCache[currentPage][k]);
-		}
-	}
-
-	void setCache(int page, LaunchpadKey key, LaunchpadLed led) override
-	{
-		if(page == launchpadDriver::ALL_PAGES)
-		{
-			for(int k = 0; k < numPages; k++)
-				setCache(k, key, led);
-		} else
-			pageCache[page][key] = led;
-	}
-
-private:
-	LaunchpadLed **pageCache;
-};
-
 struct launchpadControl
 {
 public:
@@ -408,8 +355,9 @@ protected:
 	virtual void draw(launchpadDriver *drv) = 0;
 	virtual bool intersect(LaunchpadKey key) {return false;}
 
-	launchpadControl(int page, LaunchpadKey key, bool shifted)
+	launchpadControl(int lp, int page, LaunchpadKey key, bool shifted)
 	{
+	    m_lpNumber = lp;
 		is_light= false;
 		m_page = page;
 		m_key = key;
@@ -435,6 +383,7 @@ protected:
         }
 	}
 
+	int m_lpNumber;
 	int m_page;
 	bool is_light;
 	LaunchpadKey m_key;
@@ -534,9 +483,9 @@ private:
                     SetPage(currentPage);
                 } else if(msg.cmd == LaunchpadCommand::SETSCENE)
                 {
-                #ifdef DEBUG
-                info("MSG: set scene=%i myscene=%i", msg.param1, myScene);
-                #endif
+                    #ifdef DEBUG
+                    info("MSG: set scene=%i myscene=%i", msg.param1, myScene);
+                    #endif
                     if(myScene == msg.param1)
                     {
                         redrawCache();

@@ -38,11 +38,23 @@ struct Renato : Module
 
     Renato() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS)
     {
+        #ifdef LAUNCHPAD
+        drv = new LaunchpadBindingDriver(Scene3, 2);
+        drv->SetAutoPageKey(LaunchpadKey::SESSION, 0);
+        drv->SetAutoPageKey(LaunchpadKey::NOTE, 1);
+        #endif
         on_loaded();
     }
 
+    #ifdef LAUNCHPAD
+    ~Renato()
+    {
+        delete drv;
+    }
+    #endif
+
     void step() override;
-    void reset() override {on_loaded();}
+    void reset() override {load();}
 
     void fromJson(json_t *root) override {Module::fromJson(root); on_loaded();}
     json_t *toJson() override
@@ -53,8 +65,14 @@ struct Renato : Module
     bool _accessX(int p) {return _access(xy(p, seqY.Position()));}
     bool _accessY(int p) {return _access(xy(seqX.Position(), p));}
 
+	#ifdef LAUNCHPAD
+    LaunchpadBindingDriver *drv;
+    float connected;
+    #endif
+
 private:
     void on_loaded();
+    void load();
     void led(int n) {for(int k = 0; k < 16; k++) lights[LED_1+k].value = k == n ? 10.0 : 0.0;}
     int xy(int x, int y) {return 4*y+x;}
     bool _access(int n)  {return params[ACCESS_1+n].value > 0; }
@@ -67,6 +85,14 @@ private:
 bool Access(Renato *pr, bool is_x, int p) {return is_x ? pr->_accessX(p) : pr->_accessY(p);}
 
 void Renato::on_loaded()
+{
+    #ifdef LAUNCHPAD
+    connected=0;
+    #endif
+    load();
+}
+
+void Renato::load()
 {
     seqX.Reset();
     seqY.Reset();
@@ -89,6 +115,11 @@ void Renato::step()
         outputs[CV].value = params[VOLTAGE_1+n].value;
         led(n);
     }
+
+    #ifdef LAUNCHPAD
+    connected = drv->Connected() ? 1.0 : 0.0;
+    drv->ProcessLaunchpad();
+    #endif
 }
 
 Menu *RenatoWidget::createContextMenu()
@@ -138,11 +169,29 @@ RenatoWidget::RenatoWidget()
     addInput(createInput<PJ301MPort>(Vec(x, y ), module, Renato::YCLK));
     x+= 2*dist_h;
 
-	addParam(createParam<NKK2>(Vec(x,y-10), module, Renato::COUNTMODE_X, 0.0, 2.0, 0.0));
+    // page 0 (SESSION)
+    ParamWidget *pwdg = createParam<NKK2>(Vec(x,y-10), module, Renato::COUNTMODE_X, 0.0, 2.0, 0.0);
+	addParam(pwdg);
+    #ifdef LAUNCHPAD
+    LaunchpadRadio *radio = new LaunchpadRadio(0, ILaunchpadPro::RC2Key(2,1), 3, LaunchpadLed::Color(2), LaunchpadLed::Color(3));
+    module->drv->Add(radio, pwdg);
+    #endif
+
 	x+= 5*dist_h/3;
-	addParam(createParam<NKK2>(Vec(x,y-10), module, Renato::COUNTMODE_Y, 0.0, 2.0, 0.0));
+	pwdg = createParam<NKK2>(Vec(x,y-10), module, Renato::COUNTMODE_Y, 0.0, 2.0, 0.0);
+	addParam(pwdg);
+    #ifdef LAUNCHPAD
+    radio = new LaunchpadRadio(0, ILaunchpadPro::RC2Key(2,3), 3, LaunchpadLed::Color(2), LaunchpadLed::Color(3));
+    module->drv->Add(radio, pwdg);
+    #endif
+
 	x+= 5*dist_h/3;
-	addParam(createParam<NKK2>(Vec(x,y-10), module, Renato::SEEKSLEEP, 0.0, 1.0, 0.0));
+	pwdg = createParam<NKK2>(Vec(x,y-10), module, Renato::SEEKSLEEP, 0.0, 1.0, 0.0);
+	addParam(pwdg);
+    #ifdef LAUNCHPAD
+    radio = new LaunchpadRadio(0, ILaunchpadPro::RC2Key(2,5), 2, LaunchpadLed::Color(2), LaunchpadLed::Color(3));
+    module->drv->Add(radio, pwdg);
+    #endif
 
 	x = box.size.x - 3 * dist_h-20;
     addOutput(createOutput<PJ301MPort>(Vec(x, y ), module, Renato::CV));
@@ -153,6 +202,7 @@ RenatoWidget::RenatoWidget()
     addOutput(createOutput<PJ301MPort>(Vec(x, y ), module, Renato::YGATE));
     addChild(createLight<MediumLight<GreenLight>>(Vec(x+18, y +27), module, Renato::LED_GATEY ));
 
+    // page 1 (NOTES)
 	x = 40;
 	y = 90;
 	dist_h = 95;
@@ -163,10 +213,38 @@ RenatoWidget::RenatoWidget()
 		{
 			int n = c+r*4;
 			addParam(createParam<Davies1900hBlackKnob>(Vec(x+dist_h*c, y + dist_v*r), module, Renato::VOLTAGE_1+n, 0.005, 6.0, 1.0));
-            addParam(createParam<CKSS>(Vec(x+dist_h*c-18, y + dist_v*r+8), module, Renato::ACCESS_1+n, 0.0, 1.0, 1.0));
-            addParam(createParam<CKSS>(Vec(x+dist_h*c+40, y + dist_v*r-12), module, Renato::GATEY_1+n, 0.0, 1.0, 1.0));
-            addParam(createParam<CKSS>(Vec(x+dist_h*c+40, y + dist_v*r+28), module, Renato::GATEX_1+n, 0.0, 1.0, 1.0));
-            addChild(createLight<LargeLight<RedLight>>(Vec(x+dist_h*c-4, y + dist_v*r+35), module, Renato::LED_1 + n));
+
+			pwdg = createParam<CKSS>(Vec(x+dist_h*c-18, y + dist_v*r+8), module, Renato::ACCESS_1+n, 0.0, 1.0, 1.0);
+            addParam(pwdg);
+            #ifdef LAUNCHPAD
+            LaunchpadSwitch *pswitch = new LaunchpadSwitch(1, ILaunchpadPro::RC2Key(r+4,c), LaunchpadLed::Color(3), LaunchpadLed::Color(61));
+            module->drv->Add(pswitch, pwdg);
+            #endif
+
+            pwdg = createParam<CKSS>(Vec(x+dist_h*c+40, y + dist_v*r-12), module, Renato::GATEY_1+n, 0.0, 1.0, 1.0);
+            addParam(pwdg);
+            #ifdef LAUNCHPAD
+            pswitch = new LaunchpadSwitch(1, ILaunchpadPro::RC2Key(r,c+4), LaunchpadLed::Color(4), LaunchpadLed::Color(62));
+            module->drv->Add(pswitch, pwdg);
+            #endif
+
+            pwdg = createParam<CKSS>(Vec(x+dist_h*c+40, y + dist_v*r+28), module, Renato::GATEX_1+n, 0.0, 1.0, 1.0);
+            addParam(pwdg);
+            #ifdef LAUNCHPAD
+            pswitch = new LaunchpadSwitch(1, ILaunchpadPro::RC2Key(r+4,c+4), LaunchpadLed::Color(9), LaunchpadLed::Color(52));
+            module->drv->Add(pswitch, pwdg);
+            #endif
+
+            ModuleLightWidget *plight = createLight<LargeLight<RedLight>>(Vec(x+dist_h*c-4, y + dist_v*r+35), module, Renato::LED_1 + n);
+            addChild(plight);
+            #ifdef LAUNCHPAD
+            LaunchpadLight *ld1 = new LaunchpadLight(1, ILaunchpadPro::RC2Key(r,c), LaunchpadLed::Off(), LaunchpadLed::Color(4));
+            module->drv->Add(ld1, plight);
+            #endif
 		}
 	}
+
+    #ifdef LAUNCHPAD
+    addChild(new DigitalLed((box.size.x-24)/2, 5, &module->connected));
+    #endif
 }

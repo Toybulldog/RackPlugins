@@ -52,16 +52,16 @@ struct M581 : Module
         on_loaded();
     }
 
+    #ifdef LAUNCHPAD
     ~M581()
     {
-        #ifdef LAUNCHPAD
         delete drv;
-        #endif
     }
+    #endif
 
     void step() override;
-    void reset() override {on_loaded();}
-    void randomize() override {on_loaded();}
+    void reset() override {load();}
+    void randomize() override {load();}
 
     void fromJson(json_t *root) override {Module::fromJson(root); on_loaded();}
     json_t *toJson() override
@@ -95,6 +95,7 @@ private:
 
 	void _reset();
     void on_loaded();
+    void load();
     void beginNewStep();
     void showCurStep(int cur_step, int sub_div);
     bool any();
@@ -107,6 +108,11 @@ void M581::on_loaded()
     #ifdef LAUNCHPAD
     connected=0;
     #endif
+    load();
+}
+
+void M581::load()
+{
     stepCounter.Set(&getter);
     cvControl.Set(&getter);
     gateControl.Set(&getter);

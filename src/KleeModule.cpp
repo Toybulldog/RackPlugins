@@ -50,8 +50,26 @@ struct Klee : Module
         NUM_LIGHTS
     };
 
-    Klee() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {load();}
-    void fromJson(json_t *root) override {Module::fromJson(root); load();}
+    Klee() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS)
+    {
+        #ifdef LAUNCHPAD
+        drv = new LaunchpadBindingDriver(Scene1, 3);
+        drv->SetAutoPageKey(LaunchpadKey::SESSION, 0);
+        drv->SetAutoPageKey(LaunchpadKey::NOTE, 1);
+        drv->SetAutoPageKey(LaunchpadKey::DEVICE, 2);
+        #endif
+
+        on_loaded();
+    }
+
+    #ifdef LAUNCHPAD
+    ~Klee()
+    {
+        delete drv;
+    }
+    #endif
+
+    void fromJson(json_t *root) override {Module::fromJson(root); on_loaded();}
     json_t *toJson() override
     {
 		json_t *rootJ = json_object();
@@ -62,6 +80,11 @@ struct Klee : Module
     void reset() override {load();}
     void randomize() override {load();}
 
+	#ifdef LAUNCHPAD
+    LaunchpadBindingDriver *drv;
+    float connected;
+    #endif
+
 private:
     const float pulseTime = 0.002;      //2msec trigger
     void showValues();
@@ -70,6 +93,7 @@ private:
     void populate_gate(int clk);
     void update_bus();
     void load();
+    void on_loaded();
     void populate_outputs();
     void check_triggers(float deltaTime);
     bool isSwitchOn(int ptr);
@@ -90,6 +114,14 @@ private:
 
     bool bus_active[3];
 };
+
+void Klee::on_loaded()
+{
+    #ifdef LAUNCHPAD
+    connected=0;
+    #endif
+    load();
+}
 
 void Klee::step()
 {
@@ -116,6 +148,11 @@ void Klee::step()
     check_triggers(deltaTime);
 
     showValues();
+
+    #ifdef LAUNCHPAD
+    connected = drv->Connected() ? 1.0 : 0.0;
+    drv->ProcessLaunchpad();
+    #endif
 }
 
 void Klee::load()
@@ -341,6 +378,10 @@ KleeWidget::KleeWidget()
         addParam(createParam<Davies1900hBlackKnob>(Vec(pos_x[7-k], RACK_GRID_HEIGHT-419+pos_y[7-k]), module, Klee::PITCH_KNOB + 8+ k, 0.0, 1.0, 0.125));
         addChild(createLight<MediumLight<GreenLight>>(Vec(pos_x[7-k]-12, RACK_GRID_HEIGHT-419+pos_y[7-k]+20), module, Klee::LED_PITCH + k+8));
     }
+
+    #ifdef LAUNCHPAD
+    addChild(new DigitalLed((box.size.x-28)/2-32, RACK_GRID_HEIGHT-40, &module->connected));
+    #endif
 }
 
 Menu *KleeWidget::createContextMenu()

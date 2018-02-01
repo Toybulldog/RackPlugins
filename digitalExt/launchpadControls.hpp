@@ -7,7 +7,10 @@
 struct LaunchpadSwitch : launchpadControl
 {
 	public:
-		LaunchpadSwitch(int page, LaunchpadKey key, LaunchpadLed offColor, LaunchpadLed onColor, bool shifted = false) : launchpadControl(page, key, shifted)
+		LaunchpadSwitch(int page, LaunchpadKey key, LaunchpadLed offColor, LaunchpadLed onColor, bool shifted = false)
+            : LaunchpadSwitch(0, page, key, offColor, onColor, shifted) {}
+
+		LaunchpadSwitch(int lp, int page, LaunchpadKey key, LaunchpadLed offColor, LaunchpadLed onColor, bool shifted = false) : launchpadControl(lp, page, key, shifted)
 		{
 			m_offColor = offColor;
 			m_onColor = onColor;
@@ -26,8 +29,11 @@ struct LaunchpadSwitch : launchpadControl
 struct LaunchpadMomentary : launchpadControl
 {
 	public:
-		LaunchpadMomentary(int page, LaunchpadKey key, LaunchpadLed offColor, LaunchpadLed onColor, bool shifted = false)
-			: launchpadControl(page, key, shifted)
+	    LaunchpadMomentary(int page, LaunchpadKey key, LaunchpadLed offColor, LaunchpadLed onColor, bool shifted = false)
+	     : LaunchpadMomentary(0, page, key, offColor, onColor, shifted) {}
+
+		LaunchpadMomentary(int lp, int page, LaunchpadKey key, LaunchpadLed offColor, LaunchpadLed onColor, bool shifted = false)
+			: launchpadControl(lp, page, key, shifted)
 		{
 			m_offColor = offColor;
 			m_onColor = onColor;
@@ -46,7 +52,10 @@ struct LaunchpadMomentary : launchpadControl
 struct LaunchpadKnob : launchpadControl
 {
 	public:
-		LaunchpadKnob(int page, LaunchpadKey key, LaunchpadLed rgbMin, LaunchpadLed rgbMax, bool horizontal = false, bool shifted = false) : launchpadControl(page, key, shifted)
+	    LaunchpadKnob(int page, LaunchpadKey key, LaunchpadLed rgbMin, LaunchpadLed rgbMax, bool horizontal = false, bool shifted = false) :
+	        LaunchpadKnob(0, page, key, rgbMin, rgbMax, horizontal, shifted) {}
+
+		LaunchpadKnob(int lp, int page, LaunchpadKey key, LaunchpadLed rgbMin, LaunchpadLed rgbMax, bool horizontal = false, bool shifted = false) : launchpadControl(lp, page, key, shifted)
 		{
 			m_offColor = rgbMin;
 			m_onColor = rgbMax;
@@ -106,7 +115,10 @@ struct LaunchpadKnob : launchpadControl
 struct LaunchpadLight : launchpadControl
 {
 	public:
-		LaunchpadLight(int page, LaunchpadKey key, LaunchpadLed offColor, LaunchpadLed onColor) : launchpadControl(page, key, false)
+	    LaunchpadLight(int page, LaunchpadKey key, LaunchpadLed offColor, LaunchpadLed onColor)
+	      : LaunchpadLight(0, page, key, offColor, onColor) {}
+
+		LaunchpadLight(int lp, int page, LaunchpadKey key, LaunchpadLed offColor, LaunchpadLed onColor) : launchpadControl(lp, page, key, false)
 		{
 			m_offColor = offColor;
 			m_onColor = onColor;
@@ -128,8 +140,11 @@ struct LaunchpadLight : launchpadControl
 struct LaunchpadRadio : launchpadControl
 {
 	public:
-		LaunchpadRadio(int page, LaunchpadKey firstKey, int numKeys, LaunchpadLed unselectedColor, LaunchpadLed selectedColor, bool horizontal = false, bool shifted = false)
-		: launchpadControl(page, firstKey, shifted)
+	    LaunchpadRadio(int page, LaunchpadKey firstKey, int numKeys, LaunchpadLed unselectedColor, LaunchpadLed selectedColor, bool horizontal = false, bool shifted = false)
+	     : LaunchpadRadio(0, page, firstKey, numKeys, unselectedColor, selectedColor, horizontal, shifted) {}
+
+		LaunchpadRadio(int lp, int page, LaunchpadKey firstKey, int numKeys, LaunchpadLed unselectedColor, LaunchpadLed selectedColor, bool horizontal = false, bool shifted = false)
+		: launchpadControl(lp, page, firstKey, shifted)
 		{
 			m_numKeys = numKeys;
 			m_unselectedColor = unselectedColor;

@@ -4,6 +4,7 @@
 #include <math.h>
 
 float AccessParam(Spiralone *p, int seq, int id) { return p->params[id + seq].value; }
+float AccessParam(Spiralone *p, int id) { return p->params[id].value; }
 Input *AccessInput(Spiralone *p, int seq, int id) { return &p->inputs[id + seq]; }
 float *AccessOutput(Spiralone *p, int seq, int id) { return &p->outputs[id + seq].value; }
 float *AccessLight(Spiralone *p, int id) { return &p->lights[id].value; }
@@ -47,6 +48,7 @@ SpiraloneWidget::SpiraloneWidget()
 	SVGPanel *panel = new SVGPanel();
 	panel->box.size = box.size;
 	panel->setBackground(SVG::load(assetPlugin(plugin, "res/SpiraloneModule.svg")));
+
 	addChild(panel);
 	addChild(createScrew<ScrewSilver>(Vec(RACK_GRID_WIDTH, 0)));
 	addChild(createScrew<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
@@ -76,9 +78,9 @@ SpiraloneWidget::SpiraloneWidget()
 		}
 	}
 
-#ifdef LAUNCHPAD
-	addChild(new DigitalLed((box.size.x - 24) / 2, 5, &module->connected));
-#endif
+   #ifdef LAUNCHPAD
+    addChild(new DigitalLed((box.size.x-28)/2-32, RACK_GRID_HEIGHT-28, &module->connected));
+    #endif
 }
 
 void SpiraloneWidget::createSequencer(int seq)
@@ -93,7 +95,13 @@ void SpiraloneWidget::createSequencer(int seq)
 	addInput(createInput<PJ301RPort>(Vec(x, y - 11), module, Spiralone::CLOCK_1 + seq));
 	addInput(createInput<PJ301YPort>(Vec(x, y + 19), module, Spiralone::RESET_1 + seq));
 	x += 34;
-	addParam(createParam<BefacoSwitch>(Vec(x, y), module, Spiralone::MODE_1 + seq, 0.0, 1.0, 0.0));
+
+	ParamWidget *pwdg = createParam<BefacoSnappedSwitch>(Vec(x, y), module, Spiralone::MODE_1 + seq, 0.0, 1.0, 0.0);
+	addParam(pwdg);
+    #ifdef LAUNCHPAD
+    LaunchpadSwitch *sw = new LaunchpadSwitch(0, 0, ILaunchpadPro::RC2Key(seq,0), LaunchpadLed::Color(1), LaunchpadLed::Color(3));
+    ((Spiralone *)module)->drv->Add(sw, pwdg);
+    #endif
 	x += 50;
 	addParam(createParam<BefacoSnappedTinyKnob>(Vec(x - 10, y - 12), module, Spiralone::LENGHT_1 + seq, 1.0, TOTAL_STEPS, TOTAL_STEPS));
 	addInput(createInput<PJ301MPort>(Vec(x + 10, y + 14), module, Spiralone::INLENGHT_1 + seq));
@@ -110,20 +118,19 @@ void SpiraloneWidget::createSequencer(int seq)
 	addOutput(createOutput<PJ301MPort>(Vec(x, y - 11), module, Spiralone::CV_1 + seq));
 	addOutput(createOutput<PJ301GPort>(Vec(x, y + 19), module, Spiralone::GATE_1 + seq));
 
-	x += 48;
-	addChild(createLed(seq, Vec(x, y+26), module, Spiralone::LED_GATE_1 + seq, true));
 }
 
 ModuleLightWidget *SpiraloneWidget::createLed(int seq, Vec pos, Module *module, int firstLightId, bool big)
 {
 	ModuleLightWidget * rv = new ModuleLightWidget();
 	if(big)
-		rv->box.size = mm2px(Vec(5.179, 5.179));
+		rv->box.size = mm2px(Vec(3, 3));
 	else
 		rv->box.size = mm2px(Vec(2.176, 2.176));
 	rv->box.pos = pos;
 	rv->addBaseColor(color[seq]);
 	rv->module = module;
 	rv->firstLightId = firstLightId;
+    //rv->bgColor = COLOR_BLACK_TRANSPARENT;
 	return rv;
 }

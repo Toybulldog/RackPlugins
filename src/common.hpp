@@ -9,7 +9,7 @@ using namespace rack;
 extern Plugin *plugin;
 
 #ifdef ARCH_WIN
-//#define LAUNCHPAD
+#define LAUNCHPAD
 #endif
 
 #ifdef LAUNCHPAD
@@ -103,6 +103,22 @@ struct NKK2 : NKK
         else
             setValue(0.0);
     }
+};
+
+struct BefacoSnappedSwitch : SVGSwitch, ToggleSwitch
+{
+    void randomize() override
+    {
+        if(randomf() >= 0.5)
+            setValue(1.0);
+        else
+            setValue(0.0);
+    }
+
+	BefacoSnappedSwitch() {
+		addFrame(SVG::load(assetGlobal("res/ComponentLibrary/BefacoSwitch_0.svg")));
+		addFrame(SVG::load(assetGlobal("res/ComponentLibrary/BefacoSwitch_2.svg")));
+	}
 };
 
 struct NKK3 : NKK

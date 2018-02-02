@@ -15,11 +15,11 @@ struct LaunchpadTest : Module
 	    NUM_PARAMS
 	};
 	enum InputIds {
-		FROM_LP,
+
 		NUM_INPUTS
 	};
 	enum OutputIds {
-		TO_LP,
+		KNOB_OUT,
 		NUM_OUTPUTS
 	};
 	enum LightIds {
@@ -42,6 +42,7 @@ void LaunchpadTest::step()
 {
     lights[LP_CONNECTED].value = params[LaunchpadTest::BTN2].value > 0 ? 1.0 : 0.0;
 
+    outputs[KNOB_OUT].value = params[GATE_TIME].value;
     drv->ProcessLaunchpad();
 }
 
@@ -94,9 +95,11 @@ addParam(pEna);
 addParam(pEna);
 
     LaunchpadKnob *pknob = new LaunchpadKnob(0, ILaunchpadPro::RC2Key(6,6), LaunchpadLed::Rgb(20,10,10), LaunchpadLed::Rgb(60,40,40));
-    pEna = createParam<Davies1900hBlackKnob>(Vec(50, 100), module, LaunchpadTest::GATE_TIME, 0.005, 1.0, 0.25);
+    pEna = createParam<Davies1900hBlackKnob>(Vec(50, 100), module, LaunchpadTest::GATE_TIME, 0.0, 5.0, 0.25);
     module->drv->Add(pknob, pEna);
 addParam(pEna);
+
+  addOutput(createOutput<PJ301GPort>(Vec(50, 200), module, LaunchpadTest::KNOB_OUT));
 #ifdef DEBUG
 info("RDY");
 #endif

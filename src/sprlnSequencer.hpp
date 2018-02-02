@@ -9,6 +9,7 @@ public:
 
 private:
 	SchmittTrigger2 clockTrig;
+    SchmittTrigger resetTrigger;
 	int curPos;
 
 	int ledID(int seq) { return ledID(seq, curPos); }

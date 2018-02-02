@@ -3,13 +3,14 @@
 #include "SpiraloneModule.hpp"
 
 extern float AccessParam(Spiralone *p, int seq, int id);
+extern float AccessParam(Spiralone *p, int id);
 extern Input *AccessInput(Spiralone *p, int seq, int id);
 extern float *AccessOutput(Spiralone *p, int seq, int id);
 extern float *AccessLight(Spiralone *p, int id);
 
 void spiraloneSequencer::Step(int seq, Spiralone *pSpir)
 {
-	if (AccessInput(pSpir, seq, Spiralone::RESET_1)->value > LVL_ON / 2)
+    if(resetTrigger.process(AccessInput(pSpir, seq, Spiralone::RESET_1)->value))
 		Reset(seq, pSpir);
 	else
 	{
@@ -33,9 +34,9 @@ void spiraloneSequencer::Step(int seq, Spiralone *pSpir)
 			}
 			if (curPos < 0)
 				curPos = numSteps + curPos;
-				
+
 			curPos %= numSteps;
-				
+
 			outputVoltage(seq, pSpir);
 			gate(clk, seq, pSpir);
 		} else if(clk == -1)
@@ -62,6 +63,7 @@ void spiraloneSequencer::outputVoltage(int seq, Spiralone *pSpir)
 	float v = AccessParam(pSpir, seq, Spiralone::XPOSE_1);
 	if (AccessInput(pSpir, seq, Spiralone::INXPOSE_1)->active)
 		v += AccessInput(pSpir, seq, Spiralone::INXPOSE_1)->value;
+    v+=AccessParam(pSpir, Spiralone::VOLTAGE_1+curPos);
 	*AccessOutput(pSpir, seq, Spiralone::CV_1) = clampf(v, 0.0, 10.0);
 }
 
@@ -69,12 +71,11 @@ void spiraloneSequencer::gate(int clk, int seq, Spiralone *pSpir)
 {
 	if (clk == 1)
 	{
-		*AccessLight(pSpir, Spiralone::LED_GATE_1+seq) = 10.0;
+        *AccessLight(pSpir, ledID(seq)) = 10.0;
 		*AccessOutput(pSpir, seq, Spiralone::GATE_1) = LVL_ON;
 	}
 	else if (clk == -1) // fall
 	{
-		*AccessLight(pSpir, Spiralone::LED_GATE_1 + seq) = 0.0;
 		*AccessOutput(pSpir, seq, Spiralone::GATE_1) = LVL_OFF;
 	}
 }

@@ -32,19 +32,15 @@ struct Spiralone : Module
     enum LightIds
     {
         LED_SEQUENCE_1,
-		LED_GATE_1 = (LED_SEQUENCE_1 + TOTAL_STEPS) * NUM_SEQUENCERS,
-        NUM_LIGHTS = LED_GATE_1 + NUM_SEQUENCERS
+        NUM_LIGHTS = (LED_SEQUENCE_1 + TOTAL_STEPS) * NUM_SEQUENCERS
     };
 
 
     Spiralone() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS)
     {
         #ifdef LAUNCHPAD
-        drv = new LaunchpadBindingDriver(Scene5, 3);
-        drv->SetAutoPageKey(LaunchpadKey::SESSION, 0);
-        drv->SetAutoPageKey(LaunchpadKey::NOTE, 1);
-        drv->SetAutoPageKey(LaunchpadKey::DEVICE, 2);
-        #endif
+        drv = new LaunchpadBindingDriver(Scene5, 1);
+         #endif
         on_loaded();
     }
 

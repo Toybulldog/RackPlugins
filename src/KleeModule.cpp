@@ -402,7 +402,12 @@ KleeWidget::KleeWidget()
     #endif
 
     addInput(createInput<PJ301MPort>(Vec(12, RACK_GRID_HEIGHT-28-210), module, Klee::LOAD_INPUT));
-    addParam(createParam<NKK2>(Vec(57, RACK_GRID_HEIGHT-304), module, Klee::BUS1_LOAD, 0.0, 1.0, 0.0));
+    pwdg = createParam<NKK2>(Vec(57, RACK_GRID_HEIGHT-304), module, Klee::BUS1_LOAD, 0.0, 1.0, 0.0);
+    addParam(pwdg);
+    #ifdef LAUNCHPAD
+      sw = new LaunchpadSwitch(ALL_LAUNCHPADS,  launchpadDriver::ALL_PAGES, LaunchpadKey::RECORD_ARM, LaunchpadLed::Color(31), LaunchpadLed::Color(33));
+    module->drv->Add(sw, pwdg);
+      #endif
 
     //step
     pwdg = createParam<BefacoPush>(Vec(10, RACK_GRID_HEIGHT-132-28), module, Klee::STEP_PARAM, 0.0, 1.0, 0.0);

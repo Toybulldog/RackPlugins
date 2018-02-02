@@ -109,12 +109,18 @@ void SpiraloneWidget::createSequencer(int seq)
 	x += 55;
 	addOutput(createOutput<PJ301MPort>(Vec(x, y - 11), module, Spiralone::CV_1 + seq));
 	addOutput(createOutput<PJ301GPort>(Vec(x, y + 19), module, Spiralone::GATE_1 + seq));
+
+	x += 48;
+	addChild(createLed(seq, Vec(x, y+26), module, Spiralone::LED_GATE_1 + seq, true));
 }
 
-ModuleLightWidget *SpiraloneWidget::createLed(int seq, Vec pos, Module *module, int firstLightId)
+ModuleLightWidget *SpiraloneWidget::createLed(int seq, Vec pos, Module *module, int firstLightId, bool big)
 {
 	ModuleLightWidget * rv = new ModuleLightWidget();
-	rv->box.size = mm2px(Vec(2.176, 2.176));
+	if(big)
+		rv->box.size = mm2px(Vec(5.179, 5.179));
+	else
+		rv->box.size = mm2px(Vec(2.176, 2.176));
 	rv->box.pos = pos;
 	rv->addBaseColor(color[seq]);
 	rv->module = module;

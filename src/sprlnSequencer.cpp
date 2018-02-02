@@ -13,61 +13,39 @@ void spiraloneSequencer::Step(int seq, Spiralone *pSpir)
 		Reset(seq, pSpir);
 	else
 	{
-		int mode = (int)std::roundf(AccessParam(pSpir, seq, Spiralone::MODE_1));
-		if (mode > 0)
+		int clk = clockTrig.process(AccessInput(pSpir, seq, Spiralone::CLOCK_1)->value); // 1=rise, -1=fall
+		if (clk == 1)
 		{
-			int clk = clockTrig.process(AccessInput(pSpir, seq, Spiralone::CLOCK_1)->value); // 1=rise, -1=fall
-			if (clk == 1)
+			int mode = (int)std::roundf(AccessParam(pSpir, seq, Spiralone::MODE_1));
+			int numSteps = getInput(seq, pSpir, Spiralone::INLENGHT_1, Spiralone::LENGHT_1, 1.0, TOTAL_STEPS);
+			int stride = getInput(seq, pSpir, Spiralone::INSTRIDE_1, Spiralone::STRIDE_1, 1.0, 8.0);
+
+			*AccessLight(pSpir, ledID(seq)) = 0.0;
+			switch (mode)
 			{
-				int numSteps = getInput(seq, pSpir, Spiralone::INLENGHT_1, Spiralone::LENGHT_1, 1.0, TOTAL_STEPS);
-				int stride = getInput(seq, pSpir, Spiralone::INSTRIDE_1, Spiralone::STRIDE_1, 1.0, 8.0);
+			case 0: // fwd:
+				curPos += stride;
+				break;
 
-				*AccessLight(pSpir, ledID(seq)) = 0.0;
-				switch (mode)
-				{
-				case 1: // fwd:
-					curPos += stride;
-					break;
-
-				case 2: // bwd
-					curPos -= stride;
-					break;
-
-				case 3: //altd
-					if (pp_rev)
-					{
-						curPos -= stride;
-						if(curPos < 0)
-						{
-							pp_rev = !pp_rev;
-						}
-					} else
-					{
-						curPos += stride;
-						if (curPos >= numSteps)
-						{
-							pp_rev = !pp_rev;
-						}
-					}
-					break;
-				}
-				if (curPos < 0)
-					curPos = numSteps + curPos;
+			case 1: // bwd
+				curPos -= stride;
+				break;
+			}
+			if (curPos < 0)
+				curPos = numSteps + curPos;
 				
-				curPos %= numSteps;
+			curPos %= numSteps;
 				
-				outputVoltage(seq, pSpir);
-				gate(clk, seq, pSpir);
-			} else if(clk == -1)
-				gate(clk, seq, pSpir);
-		}
+			outputVoltage(seq, pSpir);
+			gate(clk, seq, pSpir);
+		} else if(clk == -1)
+			gate(clk, seq, pSpir);
 	}
 }
 
 void spiraloneSequencer::Reset(int seq, Spiralone *pSpir)
 {
 	curPos = 0;
-	pp_rev = false;
 	for (int k = 0; k < TOTAL_STEPS; k++)
 		*AccessLight(pSpir, ledID(seq, k)) = 0.0;
 }
@@ -91,11 +69,12 @@ void spiraloneSequencer::gate(int clk, int seq, Spiralone *pSpir)
 {
 	if (clk == 1)
 	{
-		*AccessLight(pSpir, ledID(seq)) = 10.0;
+		*AccessLight(pSpir, Spiralone::LED_GATE_1+seq) = 10.0;
 		*AccessOutput(pSpir, seq, Spiralone::GATE_1) = LVL_ON;
 	}
 	else if (clk == -1) // fall
 	{
+		*AccessLight(pSpir, Spiralone::LED_GATE_1 + seq) = 0.0;
 		*AccessOutput(pSpir, seq, Spiralone::GATE_1) = LVL_OFF;
 	}
 }

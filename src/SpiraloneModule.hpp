@@ -32,7 +32,8 @@ struct Spiralone : Module
     enum LightIds
     {
         LED_SEQUENCE_1,
-        NUM_LIGHTS = (LED_SEQUENCE_1 + TOTAL_STEPS) * NUM_SEQUENCERS,
+		LED_GATE_1 = (LED_SEQUENCE_1 + TOTAL_STEPS) * NUM_SEQUENCERS,
+        NUM_LIGHTS = LED_GATE_1 + NUM_SEQUENCERS
     };
 
 

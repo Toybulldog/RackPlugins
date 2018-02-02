@@ -10,7 +10,6 @@ public:
 private:
 	SchmittTrigger2 clockTrig;
 	int curPos;
-	bool pp_rev;
 
 	int ledID(int seq) { return ledID(seq, curPos); }
 	int ledID(int seq, int n) { return seq * TOTAL_STEPS + n; }

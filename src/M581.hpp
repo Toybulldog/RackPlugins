@@ -65,25 +65,6 @@ public:
 
 };
 
-struct GateSwitch : SVGSlider
-{
-	GateSwitch()
-	{
-		snap = true;
-		maxHandlePos = Vec(-4, 0);
-		minHandlePos = Vec(-4, 37);
-		background->svg = SVG::load(assetPlugin(plugin,"res/counterSwitchShort.svg"));
-		background->wrap();
-		background->box.pos = Vec(0, 0);
-		box.size = background->box.size;
-		handle->svg = SVG::load(assetPlugin(plugin,"res/counterSwitchPotHandle.svg"));
-		handle->wrap();
-	}
-
-    void randomize() override {setValue(roundf(randomf() * maxValue));  }
-
-};
-
 
 struct CounterSwitch : SVGSlider
 {
@@ -101,15 +82,6 @@ struct CounterSwitch : SVGSlider
 	}
 
 	void randomize() override {setValue(roundf(randomf() * maxValue));  }
-};
-
-struct BefacoSnappedTinyKnob : BefacoTinyKnob
-{
-    BefacoSnappedTinyKnob() : BefacoTinyKnob()
-    {
-        snap = true;
-    }
-    void randomize() override {setValue(roundf(rescalef(randomf(), 0.0, 1.0, minValue, maxValue))); }
 };
 
 struct SigDisplayWidget : TransparentWidget {

@@ -8,6 +8,9 @@
 
 #include <algorithm>
 
+#define NUM_SEQUENCERS (5)
+#define TOTAL_STEPS (32)
+
 ////////////////////
 // module widgets
 ////////////////////
@@ -20,6 +23,10 @@ public:
 
 private:
     void createSequencer(int seq);
+    ModuleLightWidget *createLed(int seq, Vec pos, Module *module,int firstLightId);
+    NVGcolor  color[NUM_SEQUENCERS];
+
+
 };
 
 

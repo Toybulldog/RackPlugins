@@ -210,7 +210,7 @@ M581Widget::M581Widget()
         #endif
 
         // Gate switches
-        pwdg = createParam<GateSwitch>(Vec(39 + 35 * k, RACK_GRID_HEIGHT-140), module, M581::GATE_SWITCH + k, 0.0, 3.0, 2.0);
+        pwdg = createParam<VerticalSwitch>(Vec(39 + 35 * k, RACK_GRID_HEIGHT-140), module, M581::GATE_SWITCH + k, 0.0, 3.0, 2.0);
         addParam(pwdg);
         #ifdef LAUNCHPAD
         radio = new LaunchpadRadio(0, ILaunchpadPro::RC2Key(1,k), 4, LaunchpadLed::Color(6), LaunchpadLed::Color(8));
@@ -261,7 +261,7 @@ M581Widget::M581Widget()
     addParam(createParam<CKSS>(Vec(12, RACK_GRID_HEIGHT-350), module, M581::MAXVOLTS, 0.0, 1.0, 1.0));
 
     // step div
-    addParam(createParam<GateSwitch>(Vec(364, RACK_GRID_HEIGHT-340), module, M581::STEP_DIV, 0.0, 3.0, 0.0));
+    addParam(createParam<VerticalSwitch>(Vec(364, RACK_GRID_HEIGHT-340), module, M581::STEP_DIV, 0.0, 3.0, 0.0));
 
       // input
     addInput(createInput<PJ301MPort>(Vec(320, RACK_GRID_HEIGHT-240), module, M581::RESET));

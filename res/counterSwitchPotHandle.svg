@@ -9,9 +9,9 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg3728"
    version="1.1"
-   viewBox="0 0 4.7624999 3.175"
-   height="12"
-   width="18"
+   viewBox="0 0 4.6550129 3.1336588"
+   height="11.84375"
+   width="17.59375"
    sodipodi:docname="counterSwitchPotHandle.svg"
    inkscape:version="0.92.2 (5c3e80d, 2017-08-06)">
   <sodipodi:namedview
@@ -24,12 +24,12 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:window-width="1920"
-     inkscape:window-height="953"
+     inkscape:window-height="993"
      id="namedview11"
      showgrid="false"
      inkscape:zoom="32.000001"
-     inkscape:cx="-0.60169888"
-     inkscape:cy="3.192979"
+     inkscape:cx="3.5598121"
+     inkscape:cy="3.0054794"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -38,38 +38,11 @@
      inkscape:snap-grids="false"
      inkscape:snap-to-guides="false"
      showguides="true"
-     inkscape:guide-bbox="true">
-    <sodipodi:guide
-       position="0,0"
-       orientation="0,18"
-       id="guide817"
-       inkscape:locked="false" />
-    <sodipodi:guide
-       position="4.7624999,0"
-       orientation="-12,0"
-       id="guide819"
-       inkscape:locked="false" />
-    <sodipodi:guide
-       position="4.7624999,3.175"
-       orientation="0,-18"
-       id="guide821"
-       inkscape:locked="false" />
-    <sodipodi:guide
-       position="0,3.175"
-       orientation="12,0"
-       id="guide823"
-       inkscape:locked="false" />
-    <sodipodi:guide
-       position="2.3647134,1.157552"
-       orientation="1,0"
-       id="guide15"
-       inkscape:locked="false" />
-    <sodipodi:guide
-       position="3.6793618,1.5875"
-       orientation="0,1"
-       id="guide17"
-       inkscape:locked="false" />
-  </sodipodi:namedview>
+     inkscape:guide-bbox="true"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
   <defs
      id="defs3722" />
   <metadata
@@ -80,35 +53,25 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <path
-     id="rect973"
-     d="M 0.32752478,0.35529813 H 4.4549365 V 0.82754679 H 0.32752478 Z"
-     style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.07793605;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     inkscape:connector-curvature="0" />
-  <path
      id="rect973-7"
-     d="M 0.32752478,1.6840177 H 4.4549366 V 2.1562663 H 0.32752478 Z"
+     d="M 0.32752465,1.6922859 H 4.4549365 V 2.1645345 H 0.32752465 Z"
      style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.07793605;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      inkscape:connector-curvature="0" />
   <path
      id="rect973-1"
-     d="M 0.32752478,1.0196579 H 4.4549366 V 1.4919066 H 0.32752478 Z"
+     d="M 0.32752465,1.0279261 H 4.4549365 V 1.5001748 H 0.32752465 Z"
      style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.07793605;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      inkscape:connector-curvature="0" />
-  <path
-     id="rect973-2"
-     d="M 0.32752478,2.3483773 H 4.4549366 V 2.8206259 H 0.32752478 Z"
-     style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.07793605;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     inkscape:connector-curvature="0" />
   <ellipse
-     style="fill:#ff0000;stroke:#000000;stroke-width:0.079375;stroke-miterlimit:4;stroke-dasharray:none"
+     style="fill:#ff0000;stroke:none;stroke-width:0.079375;stroke-miterlimit:4;stroke-dasharray:none"
      id="path23"
      cx="2.3275065"
-     cy="1.5585612"
+     cy="1.5668294"
      rx="2.3275065"
      ry="1.5668294" />
 </svg>

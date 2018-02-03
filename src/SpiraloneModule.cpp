@@ -78,9 +78,9 @@ SpiraloneWidget::SpiraloneWidget()
 		}
 	}
 
-   #ifdef LAUNCHPAD
-    addChild(new DigitalLed((box.size.x-28)/2-32, RACK_GRID_HEIGHT-28, &module->connected));
-    #endif
+#ifdef LAUNCHPAD
+	addChild(new DigitalLed((box.size.x - 28) / 2 - 32, RACK_GRID_HEIGHT - 28, &module->connected));
+#endif
 }
 
 void SpiraloneWidget::createSequencer(int seq)
@@ -98,10 +98,16 @@ void SpiraloneWidget::createSequencer(int seq)
 
 	ParamWidget *pwdg = createParam<BefacoSnappedSwitch>(Vec(x, y), module, Spiralone::MODE_1 + seq, 0.0, 1.0, 0.0);
 	addParam(pwdg);
-    #ifdef LAUNCHPAD
-    LaunchpadSwitch *sw = new LaunchpadSwitch(0, 0, ILaunchpadPro::RC2Key(seq,0), LaunchpadLed::Color(1), LaunchpadLed::Color(3));
-    ((Spiralone *)module)->drv->Add(sw, pwdg);
-    #endif
+#ifdef LAUNCHPAD
+	int color_launchpad[NUM_SEQUENCERS][2];
+	color_launchpad[0][0] = 11; color_launchpad[0][1] = 5;
+	color_launchpad[1][0] = 1; color_launchpad[1][1] = 3;
+	color_launchpad[2][0] = 47; color_launchpad[2][1] = 37;
+	color_launchpad[3][0] = 15; color_launchpad[3][1] = 12;
+	color_launchpad[4][0] = 19; color_launchpad[4][1] = 21;
+	LaunchpadRadio *sw = new LaunchpadRadio(0, 0, ILaunchpadPro::RC2Key(0, seq), 2, LaunchpadLed::Color(color_launchpad[seq][0]), LaunchpadLed::Color(color_launchpad[seq][1]));
+	((Spiralone *)module)->drv->Add(sw, pwdg);
+#endif
 	x += 50;
 	addParam(createParam<BefacoSnappedTinyKnob>(Vec(x - 10, y - 12), module, Spiralone::LENGHT_1 + seq, 1.0, TOTAL_STEPS, TOTAL_STEPS));
 	addInput(createInput<PJ301MPort>(Vec(x + 10, y + 14), module, Spiralone::INLENGHT_1 + seq));
@@ -123,7 +129,7 @@ void SpiraloneWidget::createSequencer(int seq)
 ModuleLightWidget *SpiraloneWidget::createLed(int seq, Vec pos, Module *module, int firstLightId, bool big)
 {
 	ModuleLightWidget * rv = new ModuleLightWidget();
-	if(big)
+	if (big)
 		rv->box.size = mm2px(Vec(3, 3));
 	else
 		rv->box.size = mm2px(Vec(2.176, 2.176));
@@ -131,6 +137,6 @@ ModuleLightWidget *SpiraloneWidget::createLed(int seq, Vec pos, Module *module, 
 	rv->addBaseColor(color[seq]);
 	rv->module = module;
 	rv->firstLightId = firstLightId;
-    //rv->bgColor = COLOR_BLACK_TRANSPARENT;
+	//rv->bgColor = COLOR_BLACK_TRANSPARENT;
 	return rv;
 }

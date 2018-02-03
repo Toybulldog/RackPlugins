@@ -205,7 +205,7 @@ M581Widget::M581Widget()
         ParamWidget *pwdg = createParam<CKSSThree>(Vec(36 + 35 * k, RACK_GRID_HEIGHT-58), module, M581::STEP_ENABLE + k, 0.0, 2.0, 1.0);
         addParam(pwdg);
         #ifdef LAUNCHPAD
-        LaunchpadRadio *radio = new LaunchpadRadio(0, ILaunchpadPro::RC2Key(5,k), 3, LaunchpadLed::Color(2), LaunchpadLed::Color(3));
+        LaunchpadRadio *radio = new LaunchpadRadio(0, ILaunchpadPro::RC2Key(5,k), 3, LaunchpadLed::Color(43), LaunchpadLed::Color(32));
         module->drv->Add(radio, pwdg);
         #endif
 
@@ -213,7 +213,7 @@ M581Widget::M581Widget()
         pwdg = createParam<VerticalSwitch>(Vec(39 + 35 * k, RACK_GRID_HEIGHT-140), module, M581::GATE_SWITCH + k, 0.0, 3.0, 2.0);
         addParam(pwdg);
         #ifdef LAUNCHPAD
-        radio = new LaunchpadRadio(0, ILaunchpadPro::RC2Key(1,k), 4, LaunchpadLed::Color(6), LaunchpadLed::Color(8));
+        radio = new LaunchpadRadio(0, ILaunchpadPro::RC2Key(1,k), 4, LaunchpadLed::Color(19), LaunchpadLed::Color(17));
         module->drv->Add(radio, pwdg);
         #endif
 
@@ -231,7 +231,7 @@ M581Widget::M581Widget()
         pwdg = createParam<CounterSwitch>(Vec(39 + 35 * k, RACK_GRID_HEIGHT-246), module, M581::COUNTER_SWITCH + k, 0.0, 7.0, 0.0);
         addParam(pwdg);
         #ifdef LAUNCHPAD
-        radio = new LaunchpadRadio(2, ILaunchpadPro::RC2Key(0,k), 8, LaunchpadLed::Color(6), LaunchpadLed::Color(8));
+        radio = new LaunchpadRadio(2, ILaunchpadPro::RC2Key(0,k), 8, LaunchpadLed::Color(56), LaunchpadLed::Color(58));
         module->drv->Add(radio, pwdg);
         #endif
 
@@ -239,7 +239,7 @@ M581Widget::M581Widget()
         ModuleLightWidget *plight = createLight<LargeLight<RedLight>>(Vec(36 + 35 * k, RACK_GRID_HEIGHT-80), module, M581::LED_STEP + k);
         addChild(plight);
         #ifdef LAUNCHPAD
-        LaunchpadLight *ld1 = new LaunchpadLight(launchpadDriver::ALL_PAGES, ILaunchpadPro::RC2Key(0,k), LaunchpadLed::Off(), LaunchpadLed::Color(63));
+        LaunchpadLight *ld1 = new LaunchpadLight(launchpadDriver::ALL_PAGES, ILaunchpadPro::RC2Key(0,k), LaunchpadLed::Off(), LaunchpadLed::Color(9));
         module->drv->Add(ld1, plight);
         #endif
 

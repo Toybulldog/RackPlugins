@@ -173,7 +173,7 @@ RenatoWidget::RenatoWidget()
     ParamWidget *pwdg = createParam<NKK2>(Vec(x,y-10), module, Renato::COUNTMODE_X, 0.0, 2.0, 0.0);
 	addParam(pwdg);
     #ifdef LAUNCHPAD
-    LaunchpadRadio *radio = new LaunchpadRadio(0, ILaunchpadPro::RC2Key(2,1), 3, LaunchpadLed::Color(2), LaunchpadLed::Color(3));
+    LaunchpadRadio *radio = new LaunchpadRadio(0, ILaunchpadPro::RC2Key(2,1), 3, LaunchpadLed::Color(47), LaunchpadLed::Color(32));
     module->drv->Add(radio, pwdg);
     #endif
 
@@ -181,7 +181,7 @@ RenatoWidget::RenatoWidget()
 	pwdg = createParam<NKK2>(Vec(x,y-10), module, Renato::COUNTMODE_Y, 0.0, 2.0, 0.0);
 	addParam(pwdg);
     #ifdef LAUNCHPAD
-    radio = new LaunchpadRadio(0, ILaunchpadPro::RC2Key(2,3), 3, LaunchpadLed::Color(2), LaunchpadLed::Color(3));
+    radio = new LaunchpadRadio(0, ILaunchpadPro::RC2Key(2,3), 3, LaunchpadLed::Color(19), LaunchpadLed::Color(21));
     module->drv->Add(radio, pwdg);
     #endif
 
@@ -189,7 +189,7 @@ RenatoWidget::RenatoWidget()
 	pwdg = createParam<NKK2>(Vec(x,y-10), module, Renato::SEEKSLEEP, 0.0, 1.0, 0.0);
 	addParam(pwdg);
     #ifdef LAUNCHPAD
-    radio = new LaunchpadRadio(0, ILaunchpadPro::RC2Key(2,5), 2, LaunchpadLed::Color(2), LaunchpadLed::Color(3));
+    radio = new LaunchpadRadio(0, ILaunchpadPro::RC2Key(2,5), 2, LaunchpadLed::Color(51), LaunchpadLed::Color(52));
     module->drv->Add(radio, pwdg);
     #endif
 
@@ -217,21 +217,21 @@ RenatoWidget::RenatoWidget()
 			pwdg = createParam<CKSS>(Vec(x+dist_h*c-18, y + dist_v*r+8), module, Renato::ACCESS_1+n, 0.0, 1.0, 1.0);
             addParam(pwdg);
             #ifdef LAUNCHPAD
-            LaunchpadSwitch *pswitch = new LaunchpadSwitch(1, ILaunchpadPro::RC2Key(r+4,c), LaunchpadLed::Color(3), LaunchpadLed::Color(61));
+            LaunchpadSwitch *pswitch = new LaunchpadSwitch(1, ILaunchpadPro::RC2Key(r+4,c), LaunchpadLed::Off(), LaunchpadLed::Color(17));
             module->drv->Add(pswitch, pwdg);
             #endif
 
             pwdg = createParam<CKSS>(Vec(x+dist_h*c+40, y + dist_v*r-12), module, Renato::GATEY_1+n, 0.0, 1.0, 1.0);
             addParam(pwdg);
             #ifdef LAUNCHPAD
-            pswitch = new LaunchpadSwitch(1, ILaunchpadPro::RC2Key(r,c+4), LaunchpadLed::Color(4), LaunchpadLed::Color(62));
+            pswitch = new LaunchpadSwitch(1, ILaunchpadPro::RC2Key(r,c+4), LaunchpadLed::Off(), LaunchpadLed::Color(62));
             module->drv->Add(pswitch, pwdg);
             #endif
 
             pwdg = createParam<CKSS>(Vec(x+dist_h*c+40, y + dist_v*r+28), module, Renato::GATEX_1+n, 0.0, 1.0, 1.0);
             addParam(pwdg);
             #ifdef LAUNCHPAD
-            pswitch = new LaunchpadSwitch(1, ILaunchpadPro::RC2Key(r+4,c+4), LaunchpadLed::Color(9), LaunchpadLed::Color(52));
+            pswitch = new LaunchpadSwitch(1, ILaunchpadPro::RC2Key(r+4,c+4), LaunchpadLed::Off(), LaunchpadLed::Color(52));
             module->drv->Add(pswitch, pwdg);
             #endif
 

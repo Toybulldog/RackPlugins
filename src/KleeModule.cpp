@@ -329,11 +329,11 @@ KleeWidget::KleeWidget()
         ParamWidget *pwdg = createParam<NKK2>(Vec(38 + 35 * k, RACK_GRID_HEIGHT-370), module, Klee::LOAD_BUS + k, 0.0, 1.0, 0.0);
         addParam(pwdg);
         #ifdef LAUNCHPAD_TWO
-        LaunchpadSwitch *sw = new LaunchpadSwitch(0, 0, ILaunchpadPro::RC2Key(1,k), LaunchpadLed::Color(1), LaunchpadLed::Color(3));
+        LaunchpadSwitch *sw = new LaunchpadSwitch(0, 0, ILaunchpadPro::RC2Key(1,k), LaunchpadLed::Color(11), LaunchpadLed::Color(5));
         module->drv->Add(sw, pwdg);
         #endif
         #ifdef LAUNCHPAD_ONE
-        LaunchpadSwitch *sw = new LaunchpadSwitch(0, ILaunchpadPro::RC2Key(2,k), LaunchpadLed::Color(1), LaunchpadLed::Color(3));
+        LaunchpadSwitch *sw = new LaunchpadSwitch(0, ILaunchpadPro::RC2Key(2,k), LaunchpadLed::Color(11), LaunchpadLed::Color(5));
         module->drv->Add(sw, pwdg);
         #endif
 

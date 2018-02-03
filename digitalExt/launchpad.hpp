@@ -295,17 +295,12 @@ protected:
 private:
 	void drive_autopage()
 	{
-		LaunchpadLed dim, on;
-		on.status = dim.status = ButtonColorType::Normal;
-		dim.r_color = 1;
-		on.r_color = 2;
-
 		for(std::map<LaunchpadKey, int>::iterator it=autoPages.begin(); it!=autoPages.end(); ++it)
 		{
 			for(int k = 0; k < numPages; k++)
             {
                 LaunchpadMessage dest;
-                ILaunchpadPro::Led(&dest, it->first, it->second == currentPage ? on : dim);
+                ILaunchpadPro::Led(&dest, it->first, LaunchpadLed::Color(it->second == currentPage ? 57 : 11));
                 comm->Write(dest);
             }
 		}

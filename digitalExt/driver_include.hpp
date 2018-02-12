@@ -84,7 +84,8 @@ enum LaunchpadCommand
 	SETSTATUS,      // param0: ableton or standalone
 	RESET,
     SETSCENE,		//currentScene
-    REGISTERSCENE	// currentScene, param0: 1 = register, 0 =unregister
+    REGISTERSCENE,	// currentScene, param0: 1 = register, 0 =unregister
+    GETNUMLAUNCHPADS // lpNumber = # di launchpad trovati
 };
 
 enum LaunchpadMode {Note = 0, Drum, Fader, Programmer};

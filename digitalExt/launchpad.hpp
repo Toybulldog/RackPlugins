@@ -76,6 +76,12 @@ public:
 	    dest->currentScene = scene;
 		return dest;
 	}
+	static LaunchpadMessage *GetNumLaunchpads(LaunchpadMessage *dest)
+	{
+	    dest->currentScene = SceneAll;
+	    dest->cmd = GETNUMLAUNCHPADS;
+	    return dest;
+	}
 	static LaunchpadMessage *SetStandaloneMode(LaunchpadMessage *dest, LaunchpadMode mode)
 	{
 		dest->cmd = SET_STANDALONE_MODE;
@@ -232,6 +238,8 @@ public:
 		comm->clear();
 	}
 
+	int GetNumLaunchpads() {return numLaunchpads;}
+
 	void SetAutoPageKey(LaunchpadKey key, int page)
 	{
 		if(page >= 0 && page < numPages)
@@ -259,6 +267,7 @@ protected:
 	int currentPage;
 	LaunchpadScene myScene;
 	communicator *comm;
+	int numLaunchpads;
 	virtual void redrawCache() {drive_autopage();};
 	void setValue(int lp, int page, LaunchpadKey key, LaunchpadLed led)
 	{
@@ -282,11 +291,15 @@ protected:
 		LaunchpadMessage dest;
 		ILaunchpadPro::RegisterScene(&dest, myScene, registr);
 		dest.lpNumber = ALL_LAUNCHPADS;
+        numLaunchpads = 0;
 		if(comm->Open())
         {
             comm->Write(dest);
             if(registr)
                 SetPage(0);
+
+            ILaunchpadPro::GetNumLaunchpads(&dest);
+            comm->Write(dest);
         }
 
     }
@@ -480,6 +493,9 @@ private:
                 if(page >= 0 && msg.status == LaunchpadKeyStatus::keyDown && !msg.shiftDown)
                 {
                     SetPage(page);
+                } else if(msg.cmd == LaunchpadCommand::GETNUMLAUNCHPADS)
+                {
+                    numLaunchpads = msg.lpNumber;
                 } else if(msg.cmd == LaunchpadCommand::RESET)
                 {
                     SetPage(currentPage);

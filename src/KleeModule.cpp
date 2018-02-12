@@ -1,13 +1,6 @@
 #include "Klee.hpp"
 
 
-#ifdef LAUNCHPAD
-    #define LAUNCHPAD_TWO   // comment this line to use one launchpad only!
-
-    #ifndef LAUNCHPAD_TWO
-    #define LAUNCHPAD_ONE
-    #endif // LAUNCHPAD_TWO
-#endif
 struct Klee : Module
 {
     enum ParamIds
@@ -124,6 +117,7 @@ void Klee::on_loaded()
 {
     #ifdef LAUNCHPAD
     connected=0;
+
     #endif
     load();
 }
@@ -313,6 +307,8 @@ KleeWidget::KleeWidget()
 {
     Klee *module = new Klee();
     setModule(module);
+    int numLaunchpads = module->drv->GetNumLaunchpads();
+
     box.size = Vec(48 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT);
     SVGPanel *panel = new SVGPanel();
     panel->box.size = box.size;
@@ -328,47 +324,59 @@ KleeWidget::KleeWidget()
         // Load switches
         ParamWidget *pwdg = createParam<NKK2>(Vec(38 + 35 * k, RACK_GRID_HEIGHT-370), module, Klee::LOAD_BUS + k, 0.0, 1.0, 0.0);
         addParam(pwdg);
-        #ifdef LAUNCHPAD_TWO
-        LaunchpadSwitch *sw = new LaunchpadSwitch(0, 0, ILaunchpadPro::RC2Key(1,k), LaunchpadLed::Color(11), LaunchpadLed::Color(5));
-        module->drv->Add(sw, pwdg);
-        #endif
-        #ifdef LAUNCHPAD_ONE
-        LaunchpadSwitch *sw = new LaunchpadSwitch(0, ILaunchpadPro::RC2Key(2,k), LaunchpadLed::Color(11), LaunchpadLed::Color(5));
-        module->drv->Add(sw, pwdg);
+        #ifdef LAUNCHPAD
+        if(numLaunchpads > 1)
+        {
+            LaunchpadSwitch *sw = new LaunchpadSwitch(0, 0, ILaunchpadPro::RC2Key(1,k), LaunchpadLed::Color(11), LaunchpadLed::Color(5));
+            module->drv->Add(sw, pwdg);
+        } else
+        {
+            LaunchpadSwitch *sw = new LaunchpadSwitch(0, ILaunchpadPro::RC2Key(2,k), LaunchpadLed::Color(11), LaunchpadLed::Color(5));
+            module->drv->Add(sw, pwdg);
+        }
         #endif
 
         pwdg = createParam<NKK2>(Vec(343 + 35 * k, RACK_GRID_HEIGHT-370), module, Klee::LOAD_BUS + k + 8, 0.0, 1.0, 0.0);
         addParam(pwdg);
-        #ifdef LAUNCHPAD_TWO
-        sw = new LaunchpadSwitch(1, 0, ILaunchpadPro::RC2Key(1,k), LaunchpadLed::Color(1), LaunchpadLed::Color(5));
-        module->drv->Add(sw, pwdg);
-        #endif
-        #ifdef LAUNCHPAD_ONE
-        sw = new LaunchpadSwitch(0, ILaunchpadPro::RC2Key(3,k), LaunchpadLed::Color(1), LaunchpadLed::Color(5));
-        module->drv->Add(sw, pwdg);
+        #ifdef LAUNCHPAD
+        if(numLaunchpads > 1)
+        {
+            sw = new LaunchpadSwitch(1, 0, ILaunchpadPro::RC2Key(1,k), LaunchpadLed::Color(1), LaunchpadLed::Color(5));
+            module->drv->Add(sw, pwdg);
+        } else
+        {
+            sw = new LaunchpadSwitch(0, ILaunchpadPro::RC2Key(3,k), LaunchpadLed::Color(1), LaunchpadLed::Color(5));
+            module->drv->Add(sw, pwdg);
+        }
         #endif
 
         // BUS switches
         pwdg = createParam<NKK3>(Vec(19 + 35 * k, RACK_GRID_HEIGHT-55), module, Klee::GROUPBUS + k, 0.0, 2.0, 2.0);
         addParam(pwdg);
-        #ifdef LAUNCHPAD_TWO
+        #ifdef LAUNCHPAD
+        if(numLaunchpads > 1)
+        {
         LaunchpadRadio *radio = new LaunchpadRadio(0, 0, ILaunchpadPro::RC2Key(5,k), 3, LaunchpadLed::Color(31), LaunchpadLed::Color(35));
         module->drv->Add(radio, pwdg);
-        #endif
-        #ifdef LAUNCHPAD_ONE
+        } else
+        {
         LaunchpadThree *three = new LaunchpadThree(0, ILaunchpadPro::RC2Key(6,k), LaunchpadLed::Color(31), LaunchpadLed::Color(35), LaunchpadLed::Color(45));
         module->drv->Add(three, pwdg);
+        }
         #endif
 
         pwdg =createParam<NKK3>(Vec(356 + 35 * k, RACK_GRID_HEIGHT-55), module, Klee::GROUPBUS + k + 8, 0.0, 2.0, 2.0);
         addParam(pwdg);
-        #ifdef LAUNCHPAD_TWO
+        #ifdef LAUNCHPAD
+        if(numLaunchpads > 1)
+        {
         radio = new LaunchpadRadio(1, 0, ILaunchpadPro::RC2Key(5,k), 3, LaunchpadLed::Color(31), LaunchpadLed::Color(35));
         module->drv->Add(radio, pwdg);
-         #endif
-        #ifdef LAUNCHPAD_ONE
+        } else
+        {
         three = new LaunchpadThree(0, ILaunchpadPro::RC2Key(7,k), LaunchpadLed::Color(41), LaunchpadLed::Color(42), LaunchpadLed::Color(43));
         module->drv->Add(three, pwdg);
+        }
         #endif
     }
 
@@ -464,25 +472,31 @@ KleeWidget::KleeWidget()
 
         ModuleLightWidget *plight = createLight<MediumLight<RedLight>>(Vec(pos_x[k]+38, RACK_GRID_HEIGHT-pos_y[k]+20), module, Klee::LED_PITCH + k);
         addChild(plight);
-        #ifdef LAUNCHPAD_TWO
+        #ifdef LAUNCHPAD
+        if(numLaunchpads > 1)
+        {
         LaunchpadLight *ld1 = new LaunchpadLight(0, launchpadDriver::ALL_PAGES, ILaunchpadPro::RC2Key(0,k), LaunchpadLed::Off(), LaunchpadLed::Color(3));
         module->drv->Add(ld1, plight);
-        #endif
-        #ifdef LAUNCHPAD_ONE
+        } else
+        {
         LaunchpadLight *ld1 = new LaunchpadLight(launchpadDriver::ALL_PAGES, ILaunchpadPro::RC2Key(0,k), LaunchpadLed::Off(), LaunchpadLed::Color(3));
         module->drv->Add(ld1, plight);
+        }
         #endif
 
         addParam(createParam<Davies1900hBlackKnob>(Vec(pos_x[7-k], RACK_GRID_HEIGHT-419+pos_y[7-k]), module, Klee::PITCH_KNOB + 8+ k, 0.0, 1.0, 0.125));
         plight = createLight<MediumLight<GreenLight>>(Vec(pos_x[7-k]-12, RACK_GRID_HEIGHT-419+pos_y[7-k]+20), module, Klee::LED_PITCH + k+8);
         addChild(plight);
-        #ifdef LAUNCHPAD_TWO
+        #ifdef LAUNCHPAD
+        if(numLaunchpads > 1)
+        {
         ld1 = new LaunchpadLight(1, launchpadDriver::ALL_PAGES, ILaunchpadPro::RC2Key(0,k), LaunchpadLed::Off(), LaunchpadLed::Color(5));
         module->drv->Add(ld1, plight);
-         #endif
-        #ifdef LAUNCHPAD_ONE
+        } else
+        {
         ld1 = new LaunchpadLight(launchpadDriver::ALL_PAGES, ILaunchpadPro::RC2Key(1,k), LaunchpadLed::Off(), LaunchpadLed::Color(5));
         module->drv->Add(ld1, plight);
+        }
         #endif
     }
 

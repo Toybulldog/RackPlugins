@@ -2,8 +2,6 @@
 #include "z8kSequencer.hpp"
 #include <sstream>
 
-#undef LAUNCHPAD // non usato
-
 struct Z8K : Module
 {
     enum ParamIds
@@ -62,10 +60,8 @@ struct Z8K : Module
     Z8K() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS)
     {
         #ifdef LAUNCHPAD
-        drv = new LaunchpadBindingDriver(Scene4, 3);
+        drv = new LaunchpadBindingDriver(Scene4, 1);
         drv->SetAutoPageKey(LaunchpadKey::SESSION, 0);
-        drv->SetAutoPageKey(LaunchpadKey::NOTE, 1);
-        drv->SetAutoPageKey(LaunchpadKey::DEVICE, 2);
         #endif
         on_loaded();
     }

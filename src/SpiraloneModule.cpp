@@ -117,13 +117,12 @@ void SpiraloneWidget::createSequencer(int seq)
 	addInput(createInput<PJ301MPort>(Vec(x + 10, y + 14), module, Spiralone::INSTRIDE_1 + seq));
 
 	x += 60;
-	addParam(createParam<BefacoSnappedTinyKnob>(Vec(x - 10, y - 12), module, Spiralone::XPOSE_1 + seq, 0.0, 5.0, 0.0));
+	addParam(createParam<BefacoTinyKnob>(Vec(x - 10, y - 12), module, Spiralone::XPOSE_1 + seq, -3.0, 3.0, 0.0));
 	addInput(createInput<PJ301MPort>(Vec(x + 10, y + 14), module, Spiralone::INXPOSE_1 + seq));
 
 	x += 55;
 	addOutput(createOutput<PJ301MPort>(Vec(x, y - 11), module, Spiralone::CV_1 + seq));
 	addOutput(createOutput<PJ301GPort>(Vec(x, y + 19), module, Spiralone::GATE_1 + seq));
-
 }
 
 ModuleLightWidget *SpiraloneWidget::createLed(int seq, Vec pos, Module *module, int firstLightId, bool big)

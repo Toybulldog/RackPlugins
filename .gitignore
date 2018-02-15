@@ -1,3 +1,7 @@
 *.dll
 build/*
 dist/*
+RackPlugins/.vs/RackPlugins/v15/.suo
+RackPlugins/.vs/RackPlugins/v15/Browse.VC.db
+RackPlugins/.vs/RackPlugins/v15/Browse.VC.opendb
+*.ipch

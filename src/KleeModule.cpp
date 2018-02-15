@@ -1,6 +1,5 @@
 #include "Klee.hpp"
 
-
 struct Klee : Module
 {
 	enum ParamIds
@@ -126,20 +125,20 @@ void Klee::step()
 {
 	float deltaTime = 1.0 / engineGetSampleRate();
 
-	if (loadTrigger.process(params[LOAD_PARAM].value + inputs[LOAD_INPUT].value))
+	if(loadTrigger.process(params[LOAD_PARAM].value + inputs[LOAD_INPUT].value))
 	{
 		load();
 	}
 
 	int clk = clockTrigger.process(inputs[EXT_CLOCK_INPUT].value + params[STEP_PARAM].value); // 1=rise, -1=fall
-	if (clk == 1)
+	if(clk == 1)
 	{
 		sr_rotate();
 		update_bus();
 		populate_outputs();
 	}
 
-	if (clk != 0)
+	if(clk != 0)
 	{
 		populate_gate(clk);
 	}
@@ -156,7 +155,7 @@ void Klee::step()
 
 void Klee::load()
 {
-	for (int k = 0; k < 16; k++)
+	for(int k = 0; k < 16; k++)
 	{
 		shiftRegister.P[k] = isSwitchOn(LOAD_BUS + k);
 	}
@@ -166,30 +165,30 @@ void Klee::load()
 void Klee::update_bus()
 {
 	bool bus1 = bus_active[0];
-	for (int k = 0; k < 3; k++)
+	for(int k = 0; k < 3; k++)
 		bus_active[k] = false;
 
-	for (int k = 0; k < 16; k++)
+	for(int k = 0; k < 16; k++)
 	{
-		if (shiftRegister.P[k])
+		if(shiftRegister.P[k])
 		{
 			bus_active[getValue3(k)] = true;
 		}
 	}
-	if (isSwitchOn(BUS2_MODE))
+	if(isSwitchOn(BUS2_MODE))
 		bus_active[1] = bus_active[0] && bus_active[2];
 	else
 		bus_active[1] &= !(bus_active[0] || bus_active[2]);  //BUS 2: NOR 0 , 3
 
 	//bus1 load
-	if (isSwitchOn(BUS1_LOAD) && !bus1 && bus_active[0])
+	if(isSwitchOn(BUS1_LOAD) && !bus1 && bus_active[0])
 		load();
 }
 
 int Klee::getValue3(int k)
 {
-	if (params[GROUPBUS + k].value < 0.5) return 2;
-	if (params[GROUPBUS + k].value > 1.0) return 0;
+	if(params[GROUPBUS + k].value < 0.5) return 2;
+	if(params[GROUPBUS + k].value > 1.0) return 0;
 	return 1;
 }
 
@@ -200,9 +199,9 @@ bool Klee::isSwitchOn(int ptr)
 
 void Klee::check_triggers(float deltaTime)
 {
-	for (int k = 0; k < 3; k++)
+	for(int k = 0; k < 3; k++)
 	{
-		if (outputs[TRIG_OUT + k].value > 0.5 && !triggers[k].process(deltaTime))
+		if(outputs[TRIG_OUT + k].value > 0.5 && !triggers[k].process(deltaTime))
 		{
 			outputs[TRIG_OUT + k].value = LVL_OFF;
 		}
@@ -211,16 +210,15 @@ void Klee::check_triggers(float deltaTime)
 
 void Klee::populate_gate(int clk)
 {
-	for (int k = 0; k < 3; k++)
+	for(int k = 0; k < 3; k++)
 	{
 		// gate
-		if (clk == 1)  // rise
+		if(clk == 1)  // rise
 		{
 			outputs[GATE_OUT + k].value = bus_active[k] ? LVL_ON : LVL_OFF;
-		}
-		else // fall
+		} else // fall
 		{
-			if (!bus_active[k] || !isSwitchOn(BUS_MERGE + k))
+			if(!bus_active[k] || !isSwitchOn(BUS_MERGE + k))
 				outputs[GATE_OUT + k].value = LVL_OFF;
 		}
 	}
@@ -228,9 +226,9 @@ void Klee::populate_gate(int clk)
 
 void Klee::populate_outputs()
 {
-	for (int k = 0; k < 3; k++)
+	for(int k = 0; k < 3; k++)
 	{
-		if (bus_active[k])
+		if(bus_active[k])
 		{
 			outputs[TRIG_OUT + k].value = LVL_ON;
 			triggers[k].trigger(pulseTime);
@@ -240,12 +238,12 @@ void Klee::populate_outputs()
 	float a = 0, b = 0;
 	float mult = params[RANGE].value + inputs[RANGE_IN].value;
 
-	for (int k = 0; k < 8; k++)
+	for(int k = 0; k < 8; k++)
 	{
-		if (shiftRegister.A[k])
+		if(shiftRegister.A[k])
 			a += params[PITCH_KNOB + k].value*mult;
 
-		if (shiftRegister.B[k])
+		if(shiftRegister.B[k])
 			b += params[PITCH_KNOB + k + 8].value*mult;
 	}
 	outputs[CV_A].value = a;
@@ -256,12 +254,12 @@ void Klee::populate_outputs()
 
 void Klee::showValues()
 {
-	for (int k = 0; k < 16; k++)
+	for(int k = 0; k < 16; k++)
 	{
 		lights[LED_PITCH + k].value = shiftRegister.P[k] ? 1.0 : 0;
 	}
 
-	for (int k = 0; k < 3; k++)
+	for(int k = 0; k < 3; k++)
 	{
 		lights[LED_BUS + k].value = outputs[GATE_OUT + k].value;
 	}
@@ -269,28 +267,27 @@ void Klee::showValues()
 
 void Klee::sr_rotate()
 {
-	if (!isSwitchOn(X28_X16))  // mode 1 x 16
+	if(!isSwitchOn(X28_X16))  // mode 1 x 16
 	{
 		int fl = shiftRegister.P[15];
-		for (int k = 15; k > 0; k--)
+		for(int k = 15; k > 0; k--)
 		{
 			shiftRegister.P[k] = shiftRegister.P[k - 1];
 		}
-		if (isSwitchOn(RND_PAT))
+		if(isSwitchOn(RND_PAT))
 			shiftRegister.P[0] = chance();
 		else
 			shiftRegister.P[0] = fl;
-	}
-	else
+	} else
 	{
 		int fla = shiftRegister.A[7];
 		int flb = shiftRegister.B[7];
-		for (int k = 7; k > 0; k--)
+		for(int k = 7; k > 0; k--)
 		{
 			shiftRegister.A[k] = shiftRegister.A[k - 1];
 			shiftRegister.B[k] = shiftRegister.B[k - 1];
 		}
-		if (isSwitchOn(RND_PAT))
+		if(isSwitchOn(RND_PAT))
 			shiftRegister.A[0] = chance();
 		else
 			shiftRegister.A[0] = fla;
@@ -307,9 +304,11 @@ KleeWidget::KleeWidget()
 {
 	Klee *module = new Klee();
 	setModule(module);
+#ifdef LAUNCHPAD
 	int numLaunchpads = module->drv->GetNumLaunchpads();
 #ifdef DEBUG
 	info("%i launchpad found", numLaunchpads);
+#endif
 #endif
 	box.size = Vec(48 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT);
 	SVGPanel *panel = new SVGPanel();
@@ -321,18 +320,17 @@ KleeWidget::KleeWidget()
 	addChild(createScrew<ScrewSilver>(Vec(RACK_GRID_WIDTH, box.size.y - RACK_GRID_WIDTH)));
 	addChild(createScrew<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, box.size.y - RACK_GRID_WIDTH)));
 
-	for (int k = 0; k < 8; k++)
+	for(int k = 0; k < 8; k++)
 	{
 		// Load switches
 		ParamWidget *pwdg = createParam<NKK2>(Vec(38 + 35 * k, RACK_GRID_HEIGHT - 370), module, Klee::LOAD_BUS + k, 0.0, 1.0, 0.0);
 		addParam(pwdg);
 #ifdef LAUNCHPAD
-		if (numLaunchpads > 1)
+		if(numLaunchpads > 1)
 		{
 			LaunchpadSwitch *sw = new LaunchpadSwitch(0, 0, ILaunchpadPro::RC2Key(1, k), LaunchpadLed::Color(11), LaunchpadLed::Color(5));
 			module->drv->Add(sw, pwdg);
-		}
-		else
+		} else
 		{
 			LaunchpadSwitch *sw = new LaunchpadSwitch(0, ILaunchpadPro::RC2Key(2, k), LaunchpadLed::Color(11), LaunchpadLed::Color(5));
 			module->drv->Add(sw, pwdg);
@@ -342,12 +340,11 @@ KleeWidget::KleeWidget()
 		pwdg = createParam<NKK2>(Vec(343 + 35 * k, RACK_GRID_HEIGHT - 370), module, Klee::LOAD_BUS + k + 8, 0.0, 1.0, 0.0);
 		addParam(pwdg);
 #ifdef LAUNCHPAD
-		if (numLaunchpads > 1)
+		if(numLaunchpads > 1)
 		{
 			LaunchpadSwitch *sw = new LaunchpadSwitch(1, 0, ILaunchpadPro::RC2Key(1, k), LaunchpadLed::Color(1), LaunchpadLed::Color(5));
 			module->drv->Add(sw, pwdg);
-		}
-		else
+		} else
 		{
 			LaunchpadSwitch *sw = new LaunchpadSwitch(0, ILaunchpadPro::RC2Key(3, k), LaunchpadLed::Color(1), LaunchpadLed::Color(5));
 			module->drv->Add(sw, pwdg);
@@ -358,12 +355,11 @@ KleeWidget::KleeWidget()
 		pwdg = createParam<NKK3>(Vec(19 + 35 * k, RACK_GRID_HEIGHT - 55), module, Klee::GROUPBUS + k, 0.0, 2.0, 2.0);
 		addParam(pwdg);
 #ifdef LAUNCHPAD
-		if (numLaunchpads > 1)
+		if(numLaunchpads > 1)
 		{
 			LaunchpadRadio *radio = new LaunchpadRadio(0, 0, ILaunchpadPro::RC2Key(5, k), 3, LaunchpadLed::Color(31), LaunchpadLed::Color(35));
 			module->drv->Add(radio, pwdg);
-		}
-		else
+		} else
 		{
 			LaunchpadThree *three = new LaunchpadThree(0, ILaunchpadPro::RC2Key(6, k), LaunchpadLed::Color(31), LaunchpadLed::Color(35), LaunchpadLed::Color(45));
 			module->drv->Add(three, pwdg);
@@ -373,12 +369,11 @@ KleeWidget::KleeWidget()
 		pwdg = createParam<NKK3>(Vec(356 + 35 * k, RACK_GRID_HEIGHT - 55), module, Klee::GROUPBUS + k + 8, 0.0, 2.0, 2.0);
 		addParam(pwdg);
 #ifdef LAUNCHPAD
-		if (numLaunchpads > 1)
+		if(numLaunchpads > 1)
 		{
 			LaunchpadRadio *radio = new LaunchpadRadio(1, 0, ILaunchpadPro::RC2Key(5, k), 3, LaunchpadLed::Color(31), LaunchpadLed::Color(35));
 			module->drv->Add(radio, pwdg);
-		}
-		else
+		} else
 		{
 			LaunchpadThree *three = new LaunchpadThree(0, ILaunchpadPro::RC2Key(7, k), LaunchpadLed::Color(41), LaunchpadLed::Color(42), LaunchpadLed::Color(43));
 			module->drv->Add(three, pwdg);
@@ -387,7 +382,7 @@ KleeWidget::KleeWidget()
 	}
 
 	// trig/gate out
-	for (int k = 0; k < 3; k++)
+	for(int k = 0; k < 3; k++)
 	{
 		ParamWidget *pwdg = createParam<NKK2>(Vec(572, RACK_GRID_HEIGHT - 202 - 28 + k * 54), module, Klee::BUS_MERGE + k, 0.0, 1.0, 0.0);
 		addParam(pwdg);
@@ -470,21 +465,20 @@ KleeWidget::KleeWidget()
 	addInput(createInput<PJ301MPort>(Vec(584, RACK_GRID_HEIGHT - 270 - 28), module, Klee::RND_THRES_IN));
 
 	// pitch Knobs + leds
-	int pos_x[8] = { 109, 143, 202, 270, 336, 401, 461, 496 };
-	int pos_y[8] = { 232, 272, 299, 307, 307, 299, 272, 232 };
-	for (int k = 0; k < 8; k++)
+	int pos_x[8] = {109, 143, 202, 270, 336, 401, 461, 496};
+	int pos_y[8] = {232, 272, 299, 307, 307, 299, 272, 232};
+	for(int k = 0; k < 8; k++)
 	{
 		addParam(createParam<Davies1900hBlackKnob>(Vec(pos_x[k], RACK_GRID_HEIGHT - pos_y[k]), module, Klee::PITCH_KNOB + k, 0.0, 1.0, 0.125));
 
 		ModuleLightWidget *plight = createLight<MediumLight<RedLight>>(Vec(pos_x[k] + 38, RACK_GRID_HEIGHT - pos_y[k] + 20), module, Klee::LED_PITCH + k);
 		addChild(plight);
 #ifdef LAUNCHPAD
-		if (numLaunchpads > 1)
+		if(numLaunchpads > 1)
 		{
 			LaunchpadLight *ld1 = new LaunchpadLight(0, launchpadDriver::ALL_PAGES, ILaunchpadPro::RC2Key(0, k), LaunchpadLed::Off(), LaunchpadLed::Color(3));
 			module->drv->Add(ld1, plight);
-		}
-		else
+		} else
 		{
 			LaunchpadLight *ld1 = new LaunchpadLight(launchpadDriver::ALL_PAGES, ILaunchpadPro::RC2Key(0, k), LaunchpadLed::Off(), LaunchpadLed::Color(3));
 			module->drv->Add(ld1, plight);
@@ -495,12 +489,11 @@ KleeWidget::KleeWidget()
 		plight = createLight<MediumLight<GreenLight>>(Vec(pos_x[7 - k] - 12, RACK_GRID_HEIGHT - 419 + pos_y[7 - k] + 20), module, Klee::LED_PITCH + k + 8);
 		addChild(plight);
 #ifdef LAUNCHPAD
-		if (numLaunchpads > 1)
+		if(numLaunchpads > 1)
 		{
 			LaunchpadLight *ld1 = new LaunchpadLight(1, launchpadDriver::ALL_PAGES, ILaunchpadPro::RC2Key(0, k), LaunchpadLed::Off(), LaunchpadLed::Color(5));
 			module->drv->Add(ld1, plight);
-		}
-		else
+		} else
 		{
 			LaunchpadLight *ld1 = new LaunchpadLight(launchpadDriver::ALL_PAGES, ILaunchpadPro::RC2Key(1, k), LaunchpadLed::Off(), LaunchpadLed::Color(5));
 			module->drv->Add(ld1, plight);
@@ -529,17 +522,17 @@ Menu *KleeWidget::createContextMenu()
 
 void KleeWidget::onMenu(MENUACTIONS action)
 {
-	switch (action)
+	switch(action)
 	{
-		case RANDOMIZE_BUS: std_randomize(Klee::GROUPBUS); break;
-		case RANDOMIZE_PITCH: std_randomize(Klee::PITCH_KNOB); break;
-		case RANDOMIZE_LOAD: std_randomize(Klee::LOAD_BUS); break;
-		case SET_RANGE_1V:
-		{
-			int index = getParamIndex(Klee::RANGE);
-			if (index >= 0)
-				params[index]->setValue(1.0);
-		}
-		break;
+	case RANDOMIZE_BUS: std_randomize(Klee::GROUPBUS); break;
+	case RANDOMIZE_PITCH: std_randomize(Klee::PITCH_KNOB); break;
+	case RANDOMIZE_LOAD: std_randomize(Klee::LOAD_BUS); break;
+	case SET_RANGE_1V:
+	{
+		int index = getParamIndex(Klee::RANGE);
+		if(index >= 0)
+			params[index]->setValue(1.0);
+	}
+	break;
 	}
 }

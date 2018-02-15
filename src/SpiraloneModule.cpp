@@ -19,13 +19,13 @@ void Spiralone::on_loaded()
 
 void Spiralone::load()
 {
-	for (int k = 0; k < NUM_SEQUENCERS; k++)
+	for(int k = 0; k < NUM_SEQUENCERS; k++)
 		sequencer[k].Reset(k, this);
 }
 
 void Spiralone::step()
 {
-	for (int k = 0; k < NUM_SEQUENCERS; k++)
+	for(int k = 0; k < NUM_SEQUENCERS; k++)
 		sequencer[k].Step(k, this);
 
 #ifdef LAUNCHPAD
@@ -59,7 +59,7 @@ SpiraloneWidget::SpiraloneWidget()
 	int y = 180;
 	float step = 2 * M_PI / TOTAL_STEPS;
 	float angle = -M_PI / 2.0;
-	for (int k = 0; k < TOTAL_STEPS; k++)
+	for(int k = 0; k < TOTAL_STEPS; k++)
 	{
 		int r = 160;
 		float cx = cos(angle);
@@ -68,7 +68,7 @@ SpiraloneWidget::SpiraloneWidget()
 		addParam(createParam<BefacoTinyKnob>(Vec(x + r * cx, y + r * cy), module, Spiralone::VOLTAGE_1 + k, 0.0, 6.0, 1.0));
 
 		r -= 8;
-		for (int s = 0; s < NUM_SEQUENCERS; s++)
+		for(int s = 0; s < NUM_SEQUENCERS; s++)
 		{
 			int n = s * TOTAL_STEPS + k;
 			r -= 15;
@@ -129,7 +129,7 @@ void SpiraloneWidget::createSequencer(int seq)
 ModuleLightWidget *SpiraloneWidget::createLed(int seq, Vec pos, Module *module, int firstLightId, bool big)
 {
 	ModuleLightWidget * rv = new ModuleLightWidget();
-	if (big)
+	if(big)
 		rv->box.size = mm2px(Vec(3, 3));
 	else
 		rv->box.size = mm2px(Vec(2.176, 2.176));

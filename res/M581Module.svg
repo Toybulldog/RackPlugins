@@ -2381,18 +2381,18 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4142136"
-     inkscape:cx="-154.61756"
+     inkscape:cx="98.952742"
      inkscape:cy="122.47089"
      inkscape:document-units="mm"
-     inkscape:current-layer="layer6"
+     inkscape:current-layer="layer2"
      showgrid="false"
      units="px"
      inkscape:snap-bbox="true"
      inkscape:snap-page="true"
      inkscape:bbox-nodes="true"
      inkscape:snap-bbox-edge-midpoints="true"
-     inkscape:window-width="1858"
-     inkscape:window-height="1057"
+     inkscape:window-width="1920"
+     inkscape:window-height="993"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -2548,8 +2548,7 @@ La y e' width - posizione - 28
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Sfondoni"
-     style="display:inline;opacity:1"
-     sodipodi:insensitive="true">
+     style="display:inline;opacity:1">
     <rect
        style="opacity:1;fill:#ececec;stroke-width:0.19580078"
        id="rect1144"
@@ -2582,7 +2581,7 @@ La y e' width - posizione - 28
        height="12.326671"
        width="22.490517"
        id="rect542-0"
-       style="display:inline;opacity:1;fill:#ff0000;stroke:none;stroke-width:1.66636777;stroke-miterlimit:4;stroke-dasharray:none"
+       style="display:inline;opacity:1;fill:#ffaaaa;stroke:none;stroke-width:1.66636777;stroke-miterlimit:4;stroke-dasharray:none"
        ry="0.80000001" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.25743902px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -2845,17 +2844,17 @@ La y e' width - posizione - 28
           <polygon
              id="_196665264"
              class="fil2 str0"
-             points="189.431,50.734 171.116,75.7262 178.83,75.7262 178.747,101.794 200.556,101.754 200.556,75.7262 207.953,75.7262 "
+             points="200.556,101.754 200.556,75.7262 207.953,75.7262 189.431,50.734 171.116,75.7262 178.83,75.7262 178.747,101.794 "
              style="fill:#da251d;stroke:#000000;stroke-width:0.0762" />
           <polygon
              id="_196665048"
              class="fil0 str2"
-             points="189.431,177.606 171.116,202.598 178.83,202.598 178.747,228.666 200.556,228.625 200.556,202.598 207.953,202.598 "
+             points="200.556,228.625 200.556,202.598 207.953,202.598 189.431,177.606 171.116,202.598 178.83,202.598 178.747,228.666 "
              style="fill:#1f1a17;stroke:#ffffff;stroke-width:0.0762" />
           <polygon
              id="_196666392"
              class="fil1 str1"
-             points="189.431,114.17 171.116,139.162 178.83,139.162 178.747,165.23 200.556,165.189 200.556,139.162 207.953,139.162 "
+             points="200.556,165.189 200.556,139.162 207.953,139.162 189.431,114.17 171.116,139.162 178.83,139.162 178.747,165.23 "
              style="fill:#ffffff;stroke:#ff0000;stroke-width:0.0762" />
         </g>
       </g>

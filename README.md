@@ -21,3 +21,8 @@ X/Y Sequencer, dedicated to the great Renato!
 
 ![Z8K](/res/z8k.png?raw=true "Z8K")
 
+# Spiralone
+Hypnotic!
+
+![Z8K](/res/spiralone.png?raw=true "Spiralone")
+

@@ -7,15 +7,14 @@
 using namespace rack;
 extern Plugin *plugin;
 
-#if defined(ARCH_WIN) && defined(USE_LAUNCHPADS)
+#if defined(ARCH_WIN) && defined(USE_LAUNCHPAD)
 #define LAUNCHPAD
 #endif
 
 #ifdef LAUNCHPAD
 #include "../digitalExt/launchpad.hpp"
 #include "../digitalExt/launchpadControls.hpp"
-
-#define TEST_MODULE
+// #define TEST_MODULE
 #endif
 
 struct PJ301YPort : SVGPort {

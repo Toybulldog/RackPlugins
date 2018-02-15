@@ -3,7 +3,7 @@
 #include "rack.hpp"
 #include <map>
 #include <list>
-#define DEBUG //dbg
+//#define DEBUG
 
 /*
  R1C1 is UPPER LEFT

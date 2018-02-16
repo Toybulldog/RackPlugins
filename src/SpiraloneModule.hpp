@@ -35,7 +35,6 @@ struct Spiralone : Module
 		NUM_LIGHTS = (LED_SEQUENCE_1 + TOTAL_STEPS) * NUM_SEQUENCERS
 	};
 
-
 	Spiralone() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS)
 	{
 #ifdef LAUNCHPAD

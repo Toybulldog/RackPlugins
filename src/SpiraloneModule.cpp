@@ -139,3 +139,34 @@ ModuleLightWidget *SpiraloneWidget::createLed(int seq, Vec pos, Module *module, 
 	//rv->bgColor = COLOR_BLACK_TRANSPARENT;
 	return rv;
 }
+
+Menu *SpiraloneWidget::addContextMenu(Menu *menu) 
+{
+	menu->addChild(new SeqMenuItem<SpiraloneWidget>("Randomize Pitch", this, RANDOMIZE_PITCH));
+	menu->addChild(new SeqMenuItem<SpiraloneWidget>("Randomize Length", this, RANDOMIZE_LEN));
+	menu->addChild(new SeqMenuItem<SpiraloneWidget>("Randomize Stride", this, RANDOMIZE_STRIDE));
+	menu->addChild(new SeqMenuItem<SpiraloneWidget>("Randomize Transpose", this, RANDOMIZE_XPOSE));
+	return menu;
+}
+
+void SpiraloneWidget::onMenu(int action)
+{
+	switch(action)
+	{
+		case RANDOMIZE_PITCH:
+			std_randomize(Spiralone::VOLTAGE_1, Spiralone::VOLTAGE_1+TOTAL_STEPS);
+			break;
+
+		case RANDOMIZE_LEN:
+			std_randomize(Spiralone::LENGHT_1, Spiralone::LENGHT_1 + NUM_SEQUENCERS);
+			break;
+
+		case RANDOMIZE_STRIDE:
+			std_randomize(Spiralone::STRIDE_1, Spiralone::STRIDE_1 + NUM_SEQUENCERS);
+			break;
+
+		case RANDOMIZE_XPOSE:
+			std_randomize(Spiralone::XPOSE_1, Spiralone::XPOSE_1 + NUM_SEQUENCERS);
+			break;
+	}
+}

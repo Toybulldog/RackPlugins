@@ -122,28 +122,23 @@ void Renato::step()
 #endif
 }
 
-Menu *RenatoWidget::createContextMenu()
+Menu *RenatoWidget::addContextMenu(Menu *menu)
 {
-	Menu *menu = ModuleWidget::createContextMenu();
-
-	MenuLabel *spacerLabel = new MenuLabel();
-	menu->addChild(spacerLabel);
-
-	menu->addChild(new KleeMenuItem("Randomize Pitch", this, RANDOMIZE_PITCH));
-	menu->addChild(new KleeMenuItem("Randomize Gate Xs", this, RANDOMIZE_GATEX));
-	menu->addChild(new KleeMenuItem("Randomize Gate Ys", this, RANDOMIZE_GATEY));
-	menu->addChild(new KleeMenuItem("Randomize Access", this, RANDOMIZE_ACCESS));
+	menu->addChild(new SeqMenuItem<RenatoWidget>("Randomize Pitch", this, RANDOMIZE_PITCH));
+	menu->addChild(new SeqMenuItem<RenatoWidget>("Randomize Gate Xs", this, RANDOMIZE_GATEX));
+	menu->addChild(new SeqMenuItem<RenatoWidget>("Randomize Gate Ys", this, RANDOMIZE_GATEY));
+	menu->addChild(new SeqMenuItem<RenatoWidget>("Randomize Access", this, RANDOMIZE_ACCESS));
 	return menu;
 }
 
-void RenatoWidget::onMenu(MENUACTIONS action)
+void RenatoWidget::onMenu(int action)
 {
 	switch(action)
 	{
-	case RANDOMIZE_PITCH: std_randomize(Renato::VOLTAGE_1); break;
-	case RANDOMIZE_GATEX: std_randomize(Renato::GATEX_1); break;
-	case RANDOMIZE_GATEY: std_randomize(Renato::GATEY_1); break;
-	case RANDOMIZE_ACCESS: std_randomize(Renato::ACCESS_1); break;
+	case RANDOMIZE_PITCH: std_randomize(Renato::VOLTAGE_1, Renato::VOLTAGE_1+16); break;
+	case RANDOMIZE_GATEX: std_randomize(Renato::GATEX_1, Renato::GATEX_1+16); break;
+	case RANDOMIZE_GATEY: std_randomize(Renato::GATEY_1, Renato::GATEY_1+16); break;
+	case RANDOMIZE_ACCESS: std_randomize(Renato::ACCESS_1, Renato::ACCESS_1+16); break;
 	}
 }
 

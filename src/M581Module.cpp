@@ -292,28 +292,23 @@ M581Widget::M581Widget()
 #endif
 }
 
-Menu *M581Widget::createContextMenu()
+Menu *M581Widget::addContextMenu(Menu *menu)
 {
-	Menu *menu = ModuleWidget::createContextMenu();
-
-	MenuLabel *spacerLabel = new MenuLabel();
-	menu->addChild(spacerLabel);
-
-	menu->addChild(new KleeMenuItem("Randomize Pitch", this, RANDOMIZE_PITCH));
-	menu->addChild(new KleeMenuItem("Randomize Counters", this, RANDOMIZE_COUNTER));
-	menu->addChild(new KleeMenuItem("Randomize Modes", this, RANDOMIZE_MODE));
-	menu->addChild(new KleeMenuItem("Randomize Enable/Slide", this, RANDOMIZE_ENABLE));
+	menu->addChild(new SeqMenuItem<M581Widget>("Randomize Pitch", this, RANDOMIZE_PITCH));
+	menu->addChild(new SeqMenuItem<M581Widget>("Randomize Counters", this, RANDOMIZE_COUNTER));
+	menu->addChild(new SeqMenuItem<M581Widget>("Randomize Modes", this, RANDOMIZE_MODE));
+	menu->addChild(new SeqMenuItem<M581Widget>("Randomize Enable/Slide", this, RANDOMIZE_ENABLE));
 	return menu;
 }
 
-void M581Widget::onMenu(MENUACTIONS action)
+void M581Widget::onMenu(int action)
 {
 	switch(action)
 	{
-	case RANDOMIZE_COUNTER: std_randomize(M581::COUNTER_SWITCH); break;
-	case RANDOMIZE_PITCH: std_randomize(M581::STEP_NOTES); break;
-	case RANDOMIZE_MODE: std_randomize(M581::GATE_SWITCH); break;
-	case RANDOMIZE_ENABLE: std_randomize(M581::STEP_ENABLE); break;
+	case RANDOMIZE_COUNTER: std_randomize(M581::COUNTER_SWITCH, M581::COUNTER_SWITCH+8); break;
+	case RANDOMIZE_PITCH: std_randomize(M581::STEP_NOTES, M581::STEP_NOTES+8); break;
+	case RANDOMIZE_MODE: std_randomize(M581::GATE_SWITCH, M581::GATE_SWITCH+8); break;
+	case RANDOMIZE_ENABLE: std_randomize(M581::STEP_ENABLE, M581::STEP_ENABLE+8); break;
 	}
 }
 

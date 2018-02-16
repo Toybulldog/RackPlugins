@@ -8,7 +8,7 @@
 // module widgets
 ////////////////////
 
-struct M581Widget : ModuleWidget
+struct M581Widget : SequencerWidget
 {
 private:
 	enum MENUACTIONS
@@ -18,47 +18,11 @@ private:
 		RANDOMIZE_MODE,
 		RANDOMIZE_ENABLE
 	};
-
-	struct KleeMenuItem : MenuItem
-	{
-		KleeMenuItem(const char *title, M581Widget *pW, MENUACTIONS act)
-		{
-			text = title;
-			widget = pW;
-			action = act;
-		};
-
-		void onAction(EventAction &e) override { widget->onMenu(action); };
-
-	private:
-		M581Widget * widget;
-		MENUACTIONS action;
-	};
-
-	int getParamIndex(int index)
-	{
-		auto it = std::find_if(params.begin(), params.end(), [&index](const ParamWidget *m) -> bool { return m->paramId == index; });
-		if(it != params.end())
-			return std::distance(params.begin(), it);
-
-		return -1;
-	}
-
-	void std_randomize(int first_index)
-	{
-		for(int k = 0; k < 8; k++)
-		{
-			int index = getParamIndex(first_index + k);
-			if(index >= 0)
-				params[index]->randomize();
-		}
-	}
-
+	Menu *addContextMenu(Menu *menu) override;
+	
 public:
 	M581Widget();
-	Menu *createContextMenu() override;
-	void onMenu(MENUACTIONS action);
-
+	void onMenu(int action);
 };
 
 

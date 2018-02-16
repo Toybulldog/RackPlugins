@@ -506,27 +506,22 @@ KleeWidget::KleeWidget()
 #endif
 }
 
-Menu *KleeWidget::createContextMenu()
+Menu *KleeWidget::addContextMenu(Menu *menu)
 {
-	Menu *menu = ModuleWidget::createContextMenu();
-
-	MenuLabel *spacerLabel = new MenuLabel();
-	menu->addChild(spacerLabel);
-
-	menu->addChild(new KleeMenuItem("Range -> 1V", this, SET_RANGE_1V));
-	menu->addChild(new KleeMenuItem("Randomize Pitch", this, RANDOMIZE_PITCH));
-	menu->addChild(new KleeMenuItem("Randomize Bus", this, RANDOMIZE_BUS));
-	menu->addChild(new KleeMenuItem("Randomize Load", this, RANDOMIZE_LOAD));
+	menu->addChild(new SeqMenuItem<KleeWidget>("Range -> 1V", this, SET_RANGE_1V));
+	menu->addChild(new SeqMenuItem<KleeWidget>("Randomize Pitch", this, RANDOMIZE_PITCH));
+	menu->addChild(new SeqMenuItem<KleeWidget>("Randomize Bus", this, RANDOMIZE_BUS));
+	menu->addChild(new SeqMenuItem<KleeWidget>("Randomize Load", this, RANDOMIZE_LOAD));
 	return menu;
 }
 
-void KleeWidget::onMenu(MENUACTIONS action)
+void KleeWidget::onMenu(int action)
 {
 	switch(action)
 	{
-	case RANDOMIZE_BUS: std_randomize(Klee::GROUPBUS); break;
-	case RANDOMIZE_PITCH: std_randomize(Klee::PITCH_KNOB); break;
-	case RANDOMIZE_LOAD: std_randomize(Klee::LOAD_BUS); break;
+	case RANDOMIZE_BUS: std_randomize(Klee::GROUPBUS, Klee::GROUPBUS+16); break;
+	case RANDOMIZE_PITCH: std_randomize(Klee::PITCH_KNOB, Klee::PITCH_KNOB+16); break;
+	case RANDOMIZE_LOAD: std_randomize(Klee::LOAD_BUS, Klee::LOAD_BUS+16); break;
 	case SET_RANGE_1V:
 	{
 		int index = getParamIndex(Klee::RANGE);

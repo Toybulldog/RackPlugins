@@ -1,5 +1,6 @@
 #pragma once
 #include "rack.hpp"
+#include <algorithm>
 
 #define LVL_ON    (10.0)
 #define LVL_OFF   (0.0)
@@ -149,7 +150,7 @@ struct BefacoSnappedTinyKnob : BefacoTinyKnob
 	{
 		snap = true;
 	}
-	void randomize() override { setValue(roundf(rescalef(randomf(), 0.0, 1.0, minValue, maxValue))); }
+	void randomize() override {setValue(roundf(rescalef(randomf(), 0.0, 1.0, minValue, maxValue))); }
 };
 
 struct VerticalSwitch : SVGSlider
@@ -171,7 +172,57 @@ struct VerticalSwitch : SVGSlider
 
 };
 
+template<class T> struct SeqMenuItem : MenuItem
+{
+public:
+	SeqMenuItem(const char *title, T *pW, int act)
+	{
+		text = title;
+		widget = pW;
+		action = act;
+	};
 
+	void onAction(EventAction &e) override { widget->onMenu(action); };
+
+private:
+	T *widget;
+	int action;
+};
+
+class SequencerWidget : public ModuleWidget
+{
+protected:
+	int getParamIndex(int index)
+	{
+		auto it = std::find_if(params.begin(), params.end(), [&index](const ParamWidget *m) -> bool { return m->paramId == index; });
+		if(it != params.end())
+			return std::distance(params.begin(), it);
+
+		return -1;
+	}
+
+	void std_randomize(int first_index, int last_index)
+	{
+		for(int k = first_index; k < last_index; k++)
+		{
+			int index = getParamIndex(k);
+			if(index >= 0)
+			{
+				params[index]->randomize();
+			}
+		}
+	}
+
+	Menu *createContextMenu() override
+	{
+		Menu *menu = ModuleWidget::createContextMenu();
+		MenuLabel *spacerLabel = new MenuLabel();
+		menu->addChild(spacerLabel);
+		return addContextMenu(menu);
+	}
+
+	virtual Menu *addContextMenu(Menu *menu) { return menu; }
+};
 
 #ifdef LAUNCHPAD
 struct DigitalLed : SVGWidget

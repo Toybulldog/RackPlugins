@@ -10,3 +10,4 @@ RackPlugins/RackPlugins.sdf
 *.log
 RackPlugins/RackPlugins/x64/Release/RackPlugins.log
 *.log
+*.opensdf

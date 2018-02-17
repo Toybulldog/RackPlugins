@@ -74,9 +74,11 @@ SpiraloneWidget::SpiraloneWidget()
 			r -= 15;
 			addChild(createLed(s, Vec(x + r * cx + 9.7, y + r * cy + 9.4), module, Spiralone::LED_SEQUENCE_1 + n));
 
-			createSequencer(s);
+			if(k == 0)
+				createSequencer(s);
 		}
 	}
+
 
 #ifdef LAUNCHPAD
 	addChild(new DigitalLed((box.size.x - 28) / 2 - 32, RACK_GRID_HEIGHT - 28, &module->connected));

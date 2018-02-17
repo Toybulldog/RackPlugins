@@ -5,3 +5,8 @@ RackPlugins/.vs/RackPlugins/v15/.suo
 RackPlugins/.vs/RackPlugins/v15/Browse.VC.db
 RackPlugins/.vs/RackPlugins/v15/Browse.VC.opendb
 *.ipch
+*.suo
+RackPlugins/RackPlugins.sdf
+*.log
+RackPlugins/RackPlugins/x64/Release/RackPlugins.log
+*.log

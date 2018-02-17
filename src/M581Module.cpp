@@ -272,7 +272,7 @@ M581Widget::M581Widget()
 	addOutput(createOutput<PJ301MPort>(Vec(360, RACK_GRID_HEIGHT - 184), module, M581::GATE));
 
 	// # STEPS
-	SigDisplayWidget *display2 = new SigDisplayWidget();
+	SigDisplayWidget *display2 = new SigDisplayWidget(2);
 	display2->box.pos = Vec(346, RACK_GRID_HEIGHT - 120);
 	display2->box.size = Vec(30, 20);
 	display2->value = module->getAddress(1);

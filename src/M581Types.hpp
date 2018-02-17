@@ -21,39 +21,7 @@ private:
 	M581 * pModule;
 };
 
-struct TIMER
-{
-	void Reset()
-	{
-		prevTime = clock();
-		Begin();
-	}
 
-	void RestartStopWatch() { stopwatch = 0; }
-	void Begin()
-	{
-		totalPulseTime = 0;
-		RestartStopWatch();
-	}
-	float Elapsed() { return totalPulseTime; }
-	float StopWatch() { return stopwatch; }
-
-	float Step()
-	{
-		clock_t curTime = clock();
-		clock_t deltaTime = curTime - prevTime;
-		prevTime = curTime;
-		float t = float(deltaTime) / CLOCKS_PER_SEC;
-		totalPulseTime += t;
-		stopwatch += t;
-		return t;
-	}
-
-private:
-	clock_t prevTime;
-	float totalPulseTime;
-	float stopwatch;
-};
 
 struct CV_LINE
 {

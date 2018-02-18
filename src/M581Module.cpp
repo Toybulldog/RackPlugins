@@ -264,12 +264,12 @@ M581Widget::M581Widget()
 	addParam(createParam<VerticalSwitch>(Vec(364, RACK_GRID_HEIGHT - 340), module, M581::STEP_DIV, 0.0, 3.0, 0.0));
 
 	// input
-	addInput(createInput<PJ301MPort>(Vec(320, RACK_GRID_HEIGHT - 240), module, M581::RESET));
-	addInput(createInput<PJ301MPort>(Vec(360, RACK_GRID_HEIGHT - 240), module, M581::CLOCK));
+	addInput(createInput<PJ301YPort>(Vec(320, RACK_GRID_HEIGHT - 240), module, M581::RESET));
+	addInput(createInput<PJ301RPort>(Vec(360, RACK_GRID_HEIGHT - 240), module, M581::CLOCK));
 
 	// OUTPUTS
 	addOutput(createOutput<PJ301MPort>(Vec(320, RACK_GRID_HEIGHT - 184), module, M581::CV));
-	addOutput(createOutput<PJ301MPort>(Vec(360, RACK_GRID_HEIGHT - 184), module, M581::GATE));
+	addOutput(createOutput<PJ301GPort>(Vec(360, RACK_GRID_HEIGHT - 184), module, M581::GATE));
 
 	// # STEPS
 	SigDisplayWidget *display2 = new SigDisplayWidget(2);

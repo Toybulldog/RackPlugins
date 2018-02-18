@@ -26,3 +26,6 @@ Hypnotic!
 
 ![Z8K](/res/spiralone.png?raw=true "Spiralone")
 
+Most of these sequencers have their gate outputs dependent
+from the clock pulse cycle; for this reason there is a clock generator
+with controllable PWM (pwmClockGen).

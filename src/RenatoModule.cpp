@@ -159,9 +159,9 @@ RenatoWidget::RenatoWidget()
 	int x = 20;
 	int y = 30;
 	int dist_h = 32;
-	addInput(createInput<PJ301MPort>(Vec(x, y), module, Renato::XCLK));
+	addInput(createInput<PJ301RPort>(Vec(x, y), module, Renato::XCLK));
 	x += dist_h;
-	addInput(createInput<PJ301MPort>(Vec(x, y), module, Renato::YCLK));
+	addInput(createInput<PJ301RPort>(Vec(x, y), module, Renato::YCLK));
 	x += 2 * dist_h;
 
 	// page 0 (SESSION)
@@ -191,10 +191,10 @@ RenatoWidget::RenatoWidget()
 	x = box.size.x - 3 * dist_h - 20;
 	addOutput(createOutput<PJ301MPort>(Vec(x, y), module, Renato::CV));
 	x += dist_h;
-	addOutput(createOutput<PJ301MPort>(Vec(x, y), module, Renato::XGATE));
+	addOutput(createOutput<PJ301GPort>(Vec(x, y), module, Renato::XGATE));
 	addChild(createLight<MediumLight<GreenLight>>(Vec(x + 18, y + 27), module, Renato::LED_GATEX));
 	x += dist_h;
-	addOutput(createOutput<PJ301MPort>(Vec(x, y), module, Renato::YGATE));
+	addOutput(createOutput<PJ301GPort>(Vec(x, y), module, Renato::YGATE));
 	addChild(createLight<MediumLight<GreenLight>>(Vec(x + 18, y + 27), module, Renato::LED_GATEY));
 
 	// page 1 (NOTES)

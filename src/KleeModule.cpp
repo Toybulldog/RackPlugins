@@ -392,8 +392,8 @@ KleeWidget::KleeWidget()
 #endif
 
 		addChild(createLight<LargeLight<BlueLight>>(Vec(616, RACK_GRID_HEIGHT - 187 - 28 + k * 54), module, Klee::LED_BUS + k));
-		addOutput(createOutput<PJ301MPort>(Vec(648, RACK_GRID_HEIGHT - 192 - 28 + k * 54), module, Klee::TRIG_OUT + k));
-		addOutput(createOutput<PJ301MPort>(Vec(688, RACK_GRID_HEIGHT - 192 - 28 + k * 54), module, Klee::GATE_OUT + k));
+		addOutput(createOutput<PJ301WPort>(Vec(648, RACK_GRID_HEIGHT - 192 - 28 + k * 54), module, Klee::TRIG_OUT + k));
+		addOutput(createOutput<PJ301GPort>(Vec(688, RACK_GRID_HEIGHT - 192 - 28 + k * 54), module, Klee::GATE_OUT + k));
 	}
 	ParamWidget *pwdg = createParam<CKSS2>(Vec(550, RACK_GRID_HEIGHT - 192 - 28 + 54), module, Klee::BUS2_MODE, 0.0, 1.0, 0.0);
 	addParam(pwdg);
@@ -426,7 +426,7 @@ KleeWidget::KleeWidget()
 	module->drv->Add(mom, pwdg);
 #endif
 
-	addInput(createInput<PJ301MPort>(Vec(12, RACK_GRID_HEIGHT - 76 - 28), module, Klee::EXT_CLOCK_INPUT));
+	addInput(createInput<PJ301RPort>(Vec(12, RACK_GRID_HEIGHT - 76 - 28), module, Klee::EXT_CLOCK_INPUT));
 
 	// CV Out
 	addOutput(createOutput<PJ301MPort>(Vec(643, RACK_GRID_HEIGHT - 333 - 28), module, Klee::CV_A));

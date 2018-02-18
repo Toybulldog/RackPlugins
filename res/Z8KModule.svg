@@ -2480,21 +2480,21 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4142136"
-     inkscape:cx="356.80323"
-     inkscape:cy="113.55379"
+     inkscape:cx="417.26086"
+     inkscape:cy="56.985249"
      inkscape:document-units="mm"
-     inkscape:current-layer="layer3"
+     inkscape:current-layer="layer5"
      showgrid="false"
      units="px"
      inkscape:snap-bbox="true"
      inkscape:snap-page="true"
      inkscape:bbox-nodes="true"
      inkscape:snap-bbox-edge-midpoints="true"
-     inkscape:window-width="1920"
-     inkscape:window-height="993"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
+     inkscape:window-width="732"
+     inkscape:window-height="405"
+     inkscape:window-x="260"
+     inkscape:window-y="260"
+     inkscape:window-maximized="0"
      showguides="true"
      inkscape:guide-bbox="true">
     <sodipodi:guide
@@ -2695,12 +2695,11 @@ La y e' width - posizione - 28
      inkscape:groupmode="layer"
      id="layer5"
      inkscape:label="logo"
-     style="display:inline"
-     sodipodi:insensitive="true">
+     style="display:inline">
     <g
        style="clip-rule:evenodd;fill-rule:evenodd;image-rendering:optimizeQuality;shape-rendering:geometricPrecision;text-rendering:geometricPrecision"
        id="g4515"
-       transform="matrix(0.04,0,0,0.04,99.703217,83.821897)">
+       transform="matrix(0.04,0,0,0.04,99.703217,68.476054)">
       <g
          id="g941">
         <g
@@ -2802,17 +2801,17 @@ La y e' width - posizione - 28
           <polygon
              id="_196665264"
              class="fil2 str0"
-             points="189.431,50.734 171.116,75.7262 178.83,75.7262 178.747,101.794 200.556,101.754 200.556,75.7262 207.953,75.7262 "
+             points="178.83,75.7262 178.747,101.794 200.556,101.754 200.556,75.7262 207.953,75.7262 189.431,50.734 171.116,75.7262 "
              style="fill:#da251d;stroke:#000000;stroke-width:0.0762" />
           <polygon
              id="_196665048"
              class="fil0 str2"
-             points="189.431,177.606 171.116,202.598 178.83,202.598 178.747,228.666 200.556,228.625 200.556,202.598 207.953,202.598 "
+             points="178.83,202.598 178.747,228.666 200.556,228.625 200.556,202.598 207.953,202.598 189.431,177.606 171.116,202.598 "
              style="fill:#1f1a17;stroke:#ffffff;stroke-width:0.0762" />
           <polygon
              id="_196666392"
              class="fil1 str1"
-             points="189.431,114.17 171.116,139.162 178.83,139.162 178.747,165.23 200.556,165.189 200.556,139.162 207.953,139.162 "
+             points="178.83,139.162 178.747,165.23 200.556,165.189 200.556,139.162 207.953,139.162 189.431,114.17 171.116,139.162 "
              style="fill:#ffffff;stroke:#ff0000;stroke-width:0.0762" />
         </g>
       </g>

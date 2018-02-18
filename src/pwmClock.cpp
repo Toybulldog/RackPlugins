@@ -51,12 +51,8 @@ struct PwmClock : Module
 
 	void reset() override
 	{
-		bpm = 0;
 		bpm_integer = 120;
-		for(int k = 0; k < OUT_SOCKETS; k++)
-		{
-			sa_timer[k].Reset();
-		}
+	
 		load();
 	}
 	void randomize() override {}
@@ -97,6 +93,11 @@ private:
 
 void PwmClock::on_loaded()
 {
+	bpm = 0;
+	for(int k = 0; k < OUT_SOCKETS; k++)
+	{
+		sa_timer[k].Reset();
+	}
 	load();
 }
 

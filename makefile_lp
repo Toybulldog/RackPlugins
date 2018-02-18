@@ -1,11 +1,12 @@
+# LAUNCHPAD-ENABLED compile script
+
 SLUG = TheXOR
 VERSION = 0.5.6
-
 
 # FLAGS will be passed to both the C and C++ compiler
 FLAGS +=
 CFLAGS +=
-CXXFLAGS +=
+CXXFLAGS += -DUSE_LAUNCHPAD
 
 # Careful about linking to libraries, since you can't assume much about the user's environment and library search path.
 # Static libraries are fine.

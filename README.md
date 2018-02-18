@@ -21,3 +21,11 @@ X/Y Sequencer, dedicated to the great Renato!
 
 ![Z8K](/res/z8k.png?raw=true "Z8K")
 
+# Spiralone
+Hypnotic!
+
+![Z8K](/res/spiralone.png?raw=true "Spiralone")
+
+Most of these sequencers have their gate outputs dependent
+from the clock pulse cycle; for this reason there is a clock generator
+with controllable PWM (pwmClockGen).

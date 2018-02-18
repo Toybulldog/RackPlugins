@@ -1,0 +1,22 @@
+﻿  KleeModule.cpp
+c:\msys64\home\rack\include\math.hpp(77): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\msys64\home\rack\include\math.hpp(112): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\msys64\home\rack\include\math.hpp(112): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+c:\msys64\home\rack\include\math.hpp(119): error C2065: 'M_PI': undeclared identifier
+c:\msys64\home\rack\include\math.hpp(136): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\msys64\home\rack\include\engine.hpp(4): fatal error C1083: Cannot open include file: 'jansson.h': No such file or directory
+  M581Module.cpp
+c:\msys64\home\rack\include\math.hpp(77): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\msys64\home\rack\include\math.hpp(112): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\msys64\home\rack\include\math.hpp(112): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+c:\msys64\home\rack\include\math.hpp(119): error C2065: 'M_PI': undeclared identifier
+c:\msys64\home\rack\include\math.hpp(136): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\msys64\home\rack\include\engine.hpp(4): fatal error C1083: Cannot open include file: 'jansson.h': No such file or directory
+  RenatoModule.cpp
+c:\msys64\home\rack\include\math.hpp(77): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\msys64\home\rack\include\math.hpp(112): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\msys64\home\rack\include\math.hpp(112): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+c:\msys64\home\rack\include\math.hpp(119): error C2065: 'M_PI': undeclared identifier
+c:\msys64\home\rack\include\math.hpp(136): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\msys64\home\rack\include\engine.hpp(4): fatal error C1083: Cannot open include file: 'jansson.h': No such file or directory
+  Sequencers.cpp

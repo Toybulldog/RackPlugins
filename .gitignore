@@ -6,3 +6,9 @@ RackPlugins/.vs/*
 *.filters
 *.log
 
+*.log
+RackPlugins/RackPlugins/RackPlugins.vcxproj.filters
+*.vcxproj
+RackPlugins/RackPlugins.sdf
+*.vcxproj
+RackPlugins/RackPlugins/RackPlugins.vcxproj.filters

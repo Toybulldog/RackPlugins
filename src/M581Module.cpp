@@ -135,7 +135,7 @@ void M581::step()
 		_reset();
 	} else
 	{
-		Timer.Step(); // return deltaTime
+		Timer.Step(); 
 
 		if(clockTrigger.process(inputs[CLOCK].value) && any())
 			beginNewStep();

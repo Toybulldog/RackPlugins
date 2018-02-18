@@ -7,7 +7,7 @@ struct PwmClock : Module
 	enum ParamIds
 	{
 		BPM_INC, BPM_DEC,
-		PWM,BPM,BPMDEC,
+		PWM, BPM, BPMDEC,
 		NUM_PARAMS
 	};
 	enum InputIds
@@ -26,9 +26,9 @@ struct PwmClock : Module
 		NUM_LIGHTS
 	};
 
-	PwmClock() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) 
+	PwmClock() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS)
 	{
-	
+
 		on_loaded();
 	}
 	void step();
@@ -51,15 +51,18 @@ struct PwmClock : Module
 
 	void reset() override
 	{
+		bpm = 0;
 		bpm_integer = 120;
-		for(int k = 0; k < OUT_SOCKETS;k++)
-			timer[k].Reset();
+		for(int k = 0; k < OUT_SOCKETS; k++)
+		{
+			sa_timer[k].Reset();
+		}
 		load();
 	}
 	void randomize() override {}
 	void setWidget(PwmClockWidget *pwdg) { pWidget = pwdg; }
 	float bpm;
-		
+
 private:
 	SchmittTrigger btnup;
 	SchmittTrigger btndwn;
@@ -70,22 +73,26 @@ private:
 	void process_keys();
 	void updateBpm()
 	{
-		bpm = (roundf(params[BPMDEC].value) + 10 * bpm_integer)/10.0;
-		duration[0] = 120.0 / bpm;	// 1/1
-		duration[1] = duration[0] + duration[0] / 2.0;
-		duration[2] = 2.0* duration[0] /3.0;
-
-		for(int k = 1; k < 7; k++)
+		float new_bpm = (roundf(params[BPMDEC].value) + 10 * bpm_integer) / 10.0;
+		if(bpm != new_bpm)
 		{
-			duration[3*k] = duration[3*(k-1)] / 2.0; 
-			duration[3 * k+1] = duration[3 * (k - 1)+1] / 2.0;
-			duration[3 * k+2] = duration[3 * (k - 1)+2] / 2.0;
+			bpm = new_bpm;
+			duration[0] = 240.0 / bpm;	// 1/1
+			duration[1] = duration[0] + duration[0] / 2.0;
+			duration[2] = 2.0* duration[0] / 3.0;
+
+			for(int k = 1; k < 7; k++)
+			{
+				duration[3 * k] = duration[3 * (k - 1)] / 2.0;
+				duration[3 * k + 1] = duration[3 * (k - 1) + 1] / 2.0;
+				duration[3 * k + 2] = duration[3 * (k - 1) + 2] / 2.0;
+			}
 		}
 	}
 	float duration[OUT_SOCKETS];
 	void on_loaded();
 	void load();
-	TIMER timer[OUT_SOCKETS];
+	SA_TIMER sa_timer[OUT_SOCKETS];
 };
 
 void PwmClock::on_loaded()
@@ -102,7 +109,7 @@ void PwmClock::process_keys()
 {
 	if(btnup.process(params[BPM_INC].value))
 	{
-		if(bpm_integer < 240.0)
+		if(bpm_integer < 220.0)
 			bpm_integer += 1;
 		pWidget->SetBpm(bpm_integer);
 	}
@@ -117,22 +124,23 @@ void PwmClock::process_keys()
 
 void PwmClock::step()
 {
+	process_keys();
 	bpm_integer = roundf(params[BPM].value);
 	updateBpm();
-	process_keys();
+	
 	for(int k = 0; k < OUT_SOCKETS; k++)
 	{
-		timer[k].Step();
 		float gate_len = duration[k] * params[PWM].value;
-		float elps = timer[k].Elapsed();
+		sa_timer[k].Step();
+		float elps = sa_timer[k].Elapsed();
 		if(elps >= duration[k])
 		{
-			elps = timer[k].Reset();
+			elps = sa_timer[k].Reset();
 		}
 		if(elps <= gate_len)
-			outputs[OUT_1+k].value = LVL_ON;
+			outputs[OUT_1 + k].value = LVL_ON;
 		else
-			outputs[OUT_1+k].value = LVL_OFF;
+			outputs[OUT_1 + k].value = LVL_OFF;
 	}
 }
 
@@ -156,28 +164,29 @@ PwmClockWidget::PwmClockWidget()
 	addChild(createScrew<ScrewSilver>(Vec(box.size.x - 30, 365)));
 
 	int pos_y = 35;
-	SigDisplayWidget *display = new SigDisplayWidget(4,1);
+	SigDisplayWidget *display = new SigDisplayWidget(4, 1);
 	display->box.pos = Vec(35, pos_y);
 	display->box.size = Vec(78, 24);
 
 	display->value = &module->bpm;
 	addChild(display);
 
-	addParam(createParam<LEDButton>(Vec(10, pos_y+2), module, PwmClock::BPM_DEC, 0.0, 1.0, 0.0));
-	addParam(createParam<LEDButton>(Vec(120, pos_y+2), module, PwmClock::BPM_INC, 0.0, 1.0, 0.0));
-	addParam(createParam<Rogan1PSWhiteSnapped>(Vec(12, pos_y+36), module, PwmClock::BPM, 20.0, 240.0, 120.0));
-	addParam(createParam<Rogan1PSWhiteSnappedSmall>(Vec(62, pos_y+42), module, PwmClock::BPMDEC, 0.0, 9.0, 0.0));
-	addParam(createParam<Rogan1PSRed>(Vec(97, pos_y+36), module, PwmClock::PWM, 0.1, 0.9, 0.5));
+	addParam(createParam<LEDButton>(Vec(10, pos_y + 2), module, PwmClock::BPM_DEC, 0.0, 1.0, 0.0));
+	addParam(createParam<LEDButton>(Vec(120, pos_y + 2), module, PwmClock::BPM_INC, 0.0, 1.0, 0.0));
+	addParam(createParam<Rogan1PSWhiteSnapped>(Vec(12, pos_y + 36), module, PwmClock::BPM, 20.0, 220.0, 120.0));
+	addParam(createParam<Rogan1PSWhiteSnappedSmall>(Vec(62, pos_y + 42), module, PwmClock::BPMDEC, 0.0, 9.0, 0.0));
+	addParam(createParam<Rogan1PSRed>(Vec(97, pos_y + 36), module, PwmClock::PWM, 0.1, 0.9, 0.5));
+
 	int row = 0;
 	int col = 0;
 	const char *divisor_len[] = {"1/1", "1/2", "1/4", "1/8", "1/16", "1/32", "1/64"};
-		
+
 	for(int k = 0; k < OUT_SOCKETS; k++)
 	{
 		int x = col * 36 + 38;
-		int y = row * 34 + pos_y+96;
-		addOutput(createOutput<PJ301MPort>(Vec(x, y), module, PwmClock::OUT_1+k));
-		
+		int y = row * 29 + pos_y + 116;
+		addOutput(createOutput<PJ301MPort>(Vec(x, y), module, PwmClock::OUT_1 + k));
+
 		if(col == 0)
 		{
 			Label *label = new Label();
@@ -191,7 +200,7 @@ PwmClockWidget::PwmClockWidget()
 			col = 0;
 			row++;
 		}
-	}	
+	}
 }
 
 void PwmClockWidget::SetBpm(float bpm_integer)
